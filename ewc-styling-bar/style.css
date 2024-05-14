@@ -1,0 +1,172 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+body{
+    background-color: aqua;
+    width: 100%;
+}
+.stylingBox{
+    width: 300px;
+    height: 500px;
+    margin: 50px auto;
+    overflow-y: scroll;
+    background-color: #fff;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+.stylingBox>div{
+    margin: 20px 10px;
+}
+
+
+
+
+
+.styling_title{
+    font-size: x-large;
+}
+
+
+
+
+
+.horizontal{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.vertical{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-direction: column;
+}
+.border5{
+    border: 1px solid gainsboro;
+    border-radius: 5px;
+}
+.border10{
+    border: 1px solid gainsboro;
+    border-radius: 10px;
+}
+.border50{
+    border: 1px solid black;
+    border-radius: 50px;
+}
+.wfit{
+    width: fit-content;
+}
+.padding{
+    padding: 5px 10px;
+}
+
+.box{
+    width: fit-content;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 5px;
+}
+.colorBox{
+    width: 25px;
+    height: 25px;
+    border: 1px solid black;
+    border-radius: 50%;
+}
+
+
+
+
+
+
+/* border box */
+.col3{
+    width: 31%;
+}
+.borderBox{
+    padding: 5px 15px;
+    margin-bottom: 5px;
+}
+.solidBorder0{
+    border: 1px solid black;
+    border-radius: 0px;
+}.solidBorder5{
+    border: 1px solid black;
+    border-radius: 5px;
+}.solidBorder10{
+    border: 1px solid black;
+    border-radius: 10px;
+}.solidBorder50{
+    border: 1px solid black;
+    border-radius: 50px;
+}
+
+.dashedBorder0{
+    border: 1px dashed black;
+    border-radius: 0px;
+}.dashedBorder5{
+    border: 1px dashed black;
+    border-radius: 5px;
+}.dashedBorder10{
+    border: 1px dashed black;
+    border-radius: 10px;
+}.dashedBorder50{
+    border: 1px dashed black;
+    border-radius: 50px;
+}
+
+.dottedBorder0{
+    border: 1px dotted black;
+    border-radius: 0px;
+}.dottedBorder5{
+    border: 1px dotted black;
+    border-radius: 5px;
+}.dottedBorder10{
+    border: 1px dotted black;
+    border-radius: 10px;
+}.dottedBorder50{
+    border: 1px dotted black;
+    border-radius: 50px;
+}
+
+
+
+/* shadow */
+.shadowBox{
+
+}
+.previewShadow{
+    border: 1px solid black;
+    box-shadow: 4px 4px 0px 0px gainsboro;
+}
+
+.centerCol{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.centerCol span{
+    font-size: smaller;
+}
+.shadowBox input[type=number]{
+    width: 50px;
+    padding: 5px;
+    font-size: large;
+    border-radius: 5px;
+}
+.shadowColor{
+    width: 50px;
+    height: 50px;
+    background-color: gainsboro;
+    border: 2px solid black;
+    border-radius: 50px;
+}
