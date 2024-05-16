@@ -11,23 +11,44 @@
     width: 0;
 }
 body{
-    background-color: aqua;
     width: 100%;
+    overflow: hidden;
 }
 .stylingBox{
     width: 300px;
     height: 500px;
-    margin: 50px auto;
     overflow-y: scroll;
     background-color: #fff;
-    border: 2px solid black;
+    border: 1px solid rgb(220, 220, 220);
+    box-shadow: 0 0 1px 0px gainsboro;
     border-radius: 10px;
+    position: absolute;
+    left: calc(50% - 150px);
+
+    top: 54px;
+    user-select: none;
 }
 .stylingBox>div{
     margin: 20px 10px;
 }
 
+.stylingHandler{
+    height: 20px;
+    background-color: rgba(220, 220, 220, 0.171);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0px !important;
+    position: sticky;
+    top: 0;
+    cursor: move;
+}
 
+#closeStylingBox{
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+}
 
 
 
