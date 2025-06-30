@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        iframe {
+            border: 2px solid #ccc;
+            display: block;
+            width: 90%;
+            height: 600px;
+            margin: 20px auto;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+
+<body>
+
+
+    <iframe id="myIframe" src="./article.html" frameborder="0"></iframe>
+
+    <style>
+        #betweenContainer {
+            position: absolute;
+            display: block;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s linear;
+            pointer-events: auto;
+            background-color: transparent;
+        }
+
+        #betweenContainer.show {
+            opacity: 1;
+        }
+
+        #betweenContainer .between-content {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #betweenContainer .line {
+            position: absolute;
+            height: 1px;
+            border-radius: 2px;
+            width: 300px;
+            background-color: #ccc;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+        }
+
+        .between-content button {
+            z-index: 1;
+            padding: 5px 15px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 50px;
+            cursor: pointer;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }.between-content button:active {
+            scale: 0.96;
+        }.between-content button:hover {
+             scale: 1.02;
+        }
+
+        #blockPicker {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 5px;
+            width: 285px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 5px auto;
+        }
+        #blockPicker button{
+            width: 140px;
+            height: 25px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: left;
+            background-color: #fff;
+        }#blockPicker button:hover{
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }#blockPicker button .bi{
+           margin-right: 10px;
+        }
+    </style>
+
+
+
+
+    <div id="betweenContainer">
+        <div class="between-content">
+            <div class="line"></div>
+            <button id="addHere">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg"
+                    viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+                </svg>
+            </button>
+        </div>
+
+        <div id="blockPicker">
+            <button data-tag="p"><i class="bi bi-paragraph"></i>Paragraf</button>
+            <button data-tag="h2"><i class="bi bi-type-h2"></i>Başlık (h2)</button>
+            <button data-tag="img"><i class="bi bi-image"></i>Görsel</button>
+            <button data-tag="video"><i class="bi bi-youtube"></i>Video</button>
+            <button data-tag="hr"><i class="bi bi-hr"></i>Ayraç (hr)</button>
+            <button data-tag="p"><i class="bi bi-paragraph"></i>Paragraf</button>
+            <button data-tag="h2"><i class="bi bi-type-h2"></i>Başlık (h2)</button>
+            <button data-tag="img"><i class="bi bi-image"></i>Görsel</button>
+            <button data-tag="video"><i class="bi bi-youtube"></i>Video</button>
+            <button data-tag="p"><i class="bi bi-paragraph"></i>Paragraf</button>
+            <button data-tag="h2"><i class="bi bi-type-h2"></i>Başlık (h2)</button>
+            <button data-tag="img"><i class="bi bi-image"></i>Görsel</button>
+            <button data-tag="video"><i class="bi bi-youtube"></i>Video</button>
+            <button data-tag="hr"><i class="bi bi-hr"></i>Ayraç (hr)</button>
+           
+        
+        </div>
+    </div>
+
+
+
+    <!-- <script>
+const iframe = document.getElementById('myIframe');
+const betweenContainer = document.getElementById('betweenContainer');
+const addHereBtn = document.getElementById('addHere');
+
+let insertAfterEl = null;
+
+iframe.addEventListener('load', () => {
+  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+  const article = iframeDoc.querySelector('article');
+
+  if (!article) return;
+
+  function findClosestBetween(y) {
+    const elements = Array.from(article.children);
+    for (let i = 0; i < elements.length - 1; i++) {
+      const rect1 = elements[i].getBoundingClientRect();
+      const rect2 = elements[i + 1].getBoundingClientRect();
+      const mid1 = rect1.bottom;
+      const mid2 = rect2.top;
+
+      if (y > mid1 && y < mid2) {
+        return {
+          top: (mid1 + mid2) / 2,
+          left: rect1.left,
+          width: rect1.width,
+          insertAfter: elements[i]
+        };
+      }
+    }
+    return null;
+  }
+
+  iframeDoc.addEventListener('mousemove', (e) => {
+    const iframeRect = iframe.getBoundingClientRect();
+    const clientY = e.clientY;
+
+    const data = findClosestBetween(clientY);
+    if (data) {
+      betweenContainer.style.top = `${data.top + iframeRect.top - 15}px`;
+      betweenContainer.style.left = `${data.left + iframeRect.left}px`;
+      betweenContainer.style.width = `${data.width}px`;
+      betweenContainer.style.display = 'block';
+
+      insertAfterEl = data.insertAfter;
+    } else {
+      if (!betweenContainer.matches(':hover')) {
+        betweenContainer.style.display = 'none';
+        insertAfterEl = null;
+      }
+    }
+  });
+
+  betweenContainer.addEventListener('mouseleave', () => {
+    betweenContainer.style.display = 'none';
+    insertAfterEl = null;
+  });
+
+  addHereBtn.addEventListener('click', () => {
+    if (!insertAfterEl) return;
+
+    const newBlock = iframeDoc.createElement('p');
+    newBlock.textContent = '🆕 Yeni blok eklendi';
+    newBlock.contentEditable = true;
+    newBlock.style.border = '1px dashed #aaa';
+    newBlock.style.padding = '10px';
+    newBlock.style.margin = '10px 0';
+
+    insertAfterEl.insertAdjacentElement('afterend', newBlock);
+    betweenContainer.style.display = 'none';
+    insertAfterEl = null;
+  });
+});
+
+
+</script> -->
+
+    <script>
+        const iframe = document.getElementById('myIframe');
+        const betweenContainer = document.getElementById('betweenContainer');
+        const addHereBtn = document.getElementById('addHere');
+        const blockPicker = document.getElementById('blockPicker');
+
+        let insertAfterEl = null;
+        let showTimer = null;
+
+        iframe.addEventListener('load', () => {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            const article = iframeDoc.querySelector('article');
+            if (!article) return;
+
+            // Mouse hareketine göre hangi iki öğe arasında olduğumuzu bul
+            function findClosestBetween(y) {
+                const elements = Array.from(article.children);
+                for (let i = 0; i < elements.length - 1; i++) {
+                    const rect1 = elements[i].getBoundingClientRect();
+                    const rect2 = elements[i + 1].getBoundingClientRect();
+                    const mid1 = rect1.bottom;
+                    const mid2 = rect2.top;
+
+                    if (y > mid1 && y < mid2) {
+                        return {
+                            top: (mid1 + mid2) / 2,
+                            left: rect1.left,
+                            width: rect1.width,
+                            insertAfter: elements[i]
+                        };
+                    }
+                }
+                return null;
+            }
+
+            iframeDoc.addEventListener('mousemove', (e) => {
+                clearTimeout(showTimer);
+
+                const iframeRect = iframe.getBoundingClientRect();
+                const clientY = e.clientY;
+
+                const data = findClosestBetween(clientY);
+                if (data) {
+                    showTimer = setTimeout(() => {
+                        betweenContainer.style.top = `${data.top + iframeRect.top - 13}px`;
+                        betweenContainer.style.left = `${data.left + iframeRect.left}px`;
+                        betweenContainer.style.width = `${data.width}px`;
+                        insertAfterEl = data.insertAfter;
+
+                        betweenContainer.classList.add('show');
+                    }, 300);
+                } else {
+                    betweenContainer.classList.remove('show');
+                    blockPicker.style.display = 'none';
+                    insertAfterEl = null;
+                }
+            });
+
+            // Mouse betweenContainer'dan çıkınca gizle
+            betweenContainer.addEventListener('mouseleave', () => {
+                betweenContainer.classList.remove('show');
+                blockPicker.style.display = 'none';
+                insertAfterEl = null;
+            });
+
+            // Blok ekleme butonu
+            //   addHereBtn.addEventListener('click', () => {
+            //     if (!insertAfterEl) return;
+
+            //     const newBlock = iframeDoc.createElement('p');
+            //     newBlock.textContent = '🆕 Yeni blok eklendi';
+            //     newBlock.contentEditable = true;
+            //     newBlock.style.border = '1px dashed #aaa';
+            //     newBlock.style.padding = '10px';
+            //     newBlock.style.margin = '10px 0';
+
+            //     insertAfterEl.insertAdjacentElement('afterend', newBlock);
+            //     betweenContainer.classList.remove('show');
+            //     insertAfterEl = null;
+            //   });
+
+
+            addHereBtn.addEventListener('click', () => {
+                if (!insertAfterEl) return;
+
+                // Açıksa kapat
+                if (blockPicker.style.display === 'flex') {
+                    blockPicker.style.display = 'none';
+                    return;
+                }
+
+                // Değilse aç ve konumlandır
+                blockPicker.style.display = 'flex';
+
+                // Konumla birlikte taşı
+                const btnRect = addHereBtn.getBoundingClientRect();
+                blockPicker.style.top = `${btnRect.bottom + 5}px`;
+                blockPicker.style.left = `${btnRect.left + btnRect.width / 2}px`;
+            });
+
+
+            // Blok tiplerinden biri tıklanırsa
+            blockPicker.addEventListener('click', (e) => {
+                const tag = e.target.getAttribute('data-tag');
+                if (!tag || !insertAfterEl) return;
+
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const newEl = iframeDoc.createElement(tag);
+
+                if (tag === 'img') {
+                    const src = prompt('Görsel URL girin:');
+                    if (!src) return;
+                    newEl.src = src;
+                    newEl.alt = 'Açıklama';
+                    newEl.style.maxWidth = '100%';
+                } else if (tag === 'video') {
+                    const src = prompt('Video URL girin:');
+                    if (!src) return;
+                    newEl.src = src;
+                    newEl.controls = true;
+                    newEl.style.width = '100%';
+                } else if (tag === 'hr') {
+                    // <hr> boş içerik
+                } else {
+                    newEl.textContent = tag.toUpperCase() + ' bloğu';
+                    newEl.contentEditable = true;
+                    newEl.style.padding = '10px';
+                }
+
+                insertAfterEl.insertAdjacentElement('afterend', newEl);
+                insertAfterEl = null;
+
+                // kutu ve between gizle
+                blockPicker.style.display = 'none';
+                betweenContainer.classList.remove('show');
+            });
+
+
+
+
+        });
+
+    </script>
+
+
+
+
+
+
+
+
+</body>
+
+</html>
