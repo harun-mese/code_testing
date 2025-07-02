@@ -101,9 +101,6 @@
         }
     </style>
 
-
-
-
     <div id="betweenContainer">
         <div class="between-content">
             <div class="line"></div>
@@ -135,85 +132,6 @@
         
         </div>
     </div>
-
-
-
-    <!-- <script>
-const iframe = document.getElementById('myIframe');
-const betweenContainer = document.getElementById('betweenContainer');
-const addHereBtn = document.getElementById('addHere');
-
-let insertAfterEl = null;
-
-iframe.addEventListener('load', () => {
-  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-  const article = iframeDoc.querySelector('article');
-
-  if (!article) return;
-
-  function findClosestBetween(y) {
-    const elements = Array.from(article.children);
-    for (let i = 0; i < elements.length - 1; i++) {
-      const rect1 = elements[i].getBoundingClientRect();
-      const rect2 = elements[i + 1].getBoundingClientRect();
-      const mid1 = rect1.bottom;
-      const mid2 = rect2.top;
-
-      if (y > mid1 && y < mid2) {
-        return {
-          top: (mid1 + mid2) / 2,
-          left: rect1.left,
-          width: rect1.width,
-          insertAfter: elements[i]
-        };
-      }
-    }
-    return null;
-  }
-
-  iframeDoc.addEventListener('mousemove', (e) => {
-    const iframeRect = iframe.getBoundingClientRect();
-    const clientY = e.clientY;
-
-    const data = findClosestBetween(clientY);
-    if (data) {
-      betweenContainer.style.top = `${data.top + iframeRect.top - 15}px`;
-      betweenContainer.style.left = `${data.left + iframeRect.left}px`;
-      betweenContainer.style.width = `${data.width}px`;
-      betweenContainer.style.display = 'block';
-
-      insertAfterEl = data.insertAfter;
-    } else {
-      if (!betweenContainer.matches(':hover')) {
-        betweenContainer.style.display = 'none';
-        insertAfterEl = null;
-      }
-    }
-  });
-
-  betweenContainer.addEventListener('mouseleave', () => {
-    betweenContainer.style.display = 'none';
-    insertAfterEl = null;
-  });
-
-  addHereBtn.addEventListener('click', () => {
-    if (!insertAfterEl) return;
-
-    const newBlock = iframeDoc.createElement('p');
-    newBlock.textContent = '🆕 Yeni blok eklendi';
-    newBlock.contentEditable = true;
-    newBlock.style.border = '1px dashed #aaa';
-    newBlock.style.padding = '10px';
-    newBlock.style.margin = '10px 0';
-
-    insertAfterEl.insertAdjacentElement('afterend', newBlock);
-    betweenContainer.style.display = 'none';
-    insertAfterEl = null;
-  });
-});
-
-
-</script> -->
 
     <script>
         const iframe = document.getElementById('myIframe');
@@ -359,13 +277,212 @@ iframe.addEventListener('load', () => {
 
     </script>
 
+<style>
+    #videoSettingsBox {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #2196f3;
+      color: white;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 9999;
+      font-family: sans-serif;
+      transition: all 0.3s ease;
+    }
 
+    #videoSettingsBox.expanded {
+      width: 400px;
+      height: auto;
+      border-radius: 8px;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 10px;
+      background: #fff;
+      color: #333;
+    }
 
+    #videoSettingsToggle {
+      font-size: 24px;
+      padding: 8px;
+    }
 
+    #videoSettingsContent {
+      display: none;
+      width: 100%;
+    }
 
+    #videoSettingsBox.expanded #videoSettingsContent {
+      display: block;
+    }
 
+    #videoSettingsFields label {
+      display: block;
+      margin-bottom: 10px;
+    }
 
+    #videoSettingsFields input[type="text"],
+    #videoSettingsFields select {
+      width: 100%;
+      padding: 4px;
+      font-size: 14px;
+    }
+  </style>
 
+<div id="videoSettingsBox">
+  <div id="videoSettingsToggle">⚙</div>
+  <div id="videoSettingsContent" style="display:none">
+    <div id="videoSettingsFields"></div>
+  </div>
+</div>
+<script>
+// HTML Üzerinden Kullanılacak videoSettingsBox
+
+const theIframe = document.getElementById("myIframe");
+const videoSettingsBox = document.getElementById("videoSettingsBox");
+const videoSettingsToggle = document.getElementById("videoSettingsToggle");
+const settingsContent = document.getElementById("videoSettingsContent");
+const fieldsContainer = document.getElementById("videoSettingsFields");
+
+let isExpanded = false;
+let currentVideoEl = null;
+
+videoSettingsToggle.addEventListener("click", () => {
+  isExpanded = !isExpanded;
+  videoSettingsBox.classList.toggle("expanded", isExpanded);
+});
+
+if (theIframe) {
+  theIframe.addEventListener("load", () => {
+    const iframeDoc = theIframe.contentDocument || theIframe.contentWindow.document;
+    const mediaEls = iframeDoc.querySelectorAll("article video, article iframe");
+
+    mediaEls.forEach(el => {
+      el.addEventListener("mouseenter", () => {
+        const rect = el.getBoundingClientRect();
+        const iframeRect = theIframe.getBoundingClientRect();
+
+        const top = iframeRect.top + rect.top + window.scrollY;
+        const left = iframeRect.left + rect.left;
+
+        videoSettingsBox.style.top = `${top}px`;
+        videoSettingsBox.style.left = `${left}px`;
+        videoSettingsBox.style.display = "flex";
+
+        currentVideoEl = el;
+        setupFieldsFor(currentVideoEl);
+      });
+
+      el.addEventListener("mouseleave", () => {
+        setTimeout(() => {
+          if (!videoSettingsBox.matches(":hover") && !isExpanded) {
+            videoSettingsBox.style.display = "none";
+          }
+        }, 300);
+      });
+    });
+
+    videoSettingsBox.addEventListener("mouseleave", () => {
+      if (!isExpanded) videoSettingsBox.style.display = "none";
+    });
+  });
+}
+
+window.addEventListener("scroll", () => {
+  if (videoSettingsBox.style.display === "flex" && currentVideoEl) {
+    const iframeRect = theIframe.getBoundingClientRect();
+    const elRect = currentVideoEl.getBoundingClientRect();
+    videoSettingsBox.style.top = `${iframeRect.top + elRect.top + window.scrollY}px`;
+    videoSettingsBox.style.left = `${iframeRect.left + elRect.left}px`;
+  }
+});
+
+function setupFieldsFor(el) {
+  const isYouTube = el.tagName === "IFRAME" && el.src.includes("youtube.com");
+  const isVideo = el.tagName === "VIDEO";
+
+  fieldsContainer.innerHTML = "";
+
+  const aspectOptions = [
+    "1:1", "4:3", "16:9", "9:16", "3:4", "2:1"
+  ].map(ratio => `<option value="${ratio}">${ratio}</option>`).join("");
+
+  if (isYouTube) {
+    fieldsContainer.innerHTML = `
+      <label>Youtube Link:
+        <input type="text" id="ytLink" value="${el.src}" style="width: 100%;" />
+      </label>
+      <label>En-Boy Oranı:
+        <select id="ytAspect">${aspectOptions}</select>
+      </label>
+    `;
+
+    fieldsContainer.querySelector("#ytLink").addEventListener("input", e => {
+      el.src = convertYouTubeToEmbed(e.target.value);
+    });
+    fieldsContainer.querySelector("#ytAspect").addEventListener("change", e => {
+      applyAspectRatio(el, e.target.value);
+    });
+  }
+
+  if (isVideo) {
+    fieldsContainer.innerHTML = `
+      <label>Video Link:
+        <input type="text" id="vidLink" value="${el.src}" style="width: 100%;" />
+      </label>
+      <label>
+        <input type="checkbox" id="vidControls" ${el.controls ? "checked" : ""}> Controls
+      </label>
+      <label>
+        <input type="checkbox" id="vidAutoplay" ${el.autoplay ? "checked" : ""}> Autoplay
+      </label>
+      <label>
+        <input type="checkbox" id="vidLoop" ${el.loop ? "checked" : ""}> Loop
+      </label>
+      <label>En-Boy Oranı:
+        <select id="vidAspect">${aspectOptions}</select>
+      </label>
+    `;
+
+    fieldsContainer.querySelector("#vidLink").addEventListener("input", e => {
+      el.src = convertYouTubeToEmbed(e.target.value);
+    });
+    fieldsContainer.querySelector("#vidControls").addEventListener("change", e => {
+      el.controls = e.target.checked;
+    });
+    fieldsContainer.querySelector("#vidAutoplay").addEventListener("change", e => {
+      el.autoplay = e.target.checked;
+    });
+    fieldsContainer.querySelector("#vidLoop").addEventListener("change", e => {
+      el.loop = e.target.checked;
+    });
+    fieldsContainer.querySelector("#vidAspect").addEventListener("change", e => {
+      applyAspectRatio(el, e.target.value);
+    });
+  }
+}
+
+function applyAspectRatio(el, ratio) {
+  const [w, h] = ratio.split(":").map(Number);
+  if (!w || !h) return;
+  el.style.width = "100%";
+  el.style.aspectRatio = `${w} / ${h}`;
+}
+
+function convertYouTubeToEmbed(url) {
+  try {
+    const videoIdMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if (videoIdMatch && videoIdMatch[1]) {
+      return `https://www.youtube.com/embed/${videoIdMatch[1]}`;
+    }
+  } catch (e) {}
+  return url;
+}
+
+</script>
 </body>
 
 </html>
