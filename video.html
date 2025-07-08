@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Video & YouTube Ayar Paneli</title>
+  <style>
+    #videoSettingsBox {
+      position: absolute;
+      width: 270px;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      z-index: 9999;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      transition: opacity 0.2s ease;
+      border-radius:10px;
+    }
+
+    #videoSettingsBox.expanded {
+      display: flex !important;
+    }
+
+    #videoSettingsFields label {
+      display: block;
+      margin: 5px 0;
+      padding:5px 0px;
+    }
+      #videoSettingsFields label input[text] {
+      width: calc(100% - 10px);
+    }
+    .gallery-icon {
+      cursor: pointer;
+      font-size: 18px;
+      padding: 2px 6px;
+      border: 1px solid #999;
+      display: inline-block;
+      background: #eee;
+      margin-left: 6px;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="iframe" src="article.html" width="100%" height="900" style="border: 1px solid #000;"></iframe>
+
+  <div id="videoSettingsBox">
+    <div id="videoSettingsFields"></div>
+  </div>
+
+  <script>
+    const theIframe = document.getElementById("iframe");
+    const videoSettingsBox = document.getElementById("videoSettingsBox");
+    const fieldsContainer = document.getElementById("videoSettingsFields");
+
+    let currentVideoEl = null;
+
+    if (theIframe) {
+      theIframe.addEventListener("load", () => {
+        const iframeDoc = theIframe.contentDocument || theIframe.contentWindow.document;
+        const mediaEls = iframeDoc.querySelectorAll("article video, article iframe");
+
+        mediaEls.forEach(el => {
+          el.addEventListener("mouseenter", () => {
+            currentVideoEl = el;
+            positionSettingsBox(el);
+            videoSettingsBox.classList.add("expanded");
+            setupFieldsFor(el);
+          });
+
+          el.addEventListener("mouseleave", () => {
+            setTimeout(() => {
+              if (!videoSettingsBox.matches(":hover")) {
+                videoSettingsBox.classList.remove("expanded");
+              }
+            }, 300);
+          });
+        });
+
+        videoSettingsBox.addEventListener("mouseleave", () => {
+          videoSettingsBox.classList.remove("expanded");
+        });
+
+         theIframe.addEventListener("scroll", () => {
+            if (videoSettingsBox.classList.contains("expanded") && currentVideoEl) {
+                positionSettingsBox(currentVideoEl);
+            }
+         });
+      });
+    }
+
+   
+
+    function positionSettingsBox(el) {
+      const iframeRect = theIframe.getBoundingClientRect();
+      const elRect = el.getBoundingClientRect();
+
+      const top = iframeRect.top + elRect.top + window.scrollY + 10;
+      const left = iframeRect.left + elRect.left + window.scrollX + 10;
+
+      const visible = elRect.top >= 0 && elRect.bottom <= window.innerHeight;
+
+      if (visible) {
+        videoSettingsBox.style.position = "absolute";
+        videoSettingsBox.style.top = `${top}px`;
+        videoSettingsBox.style.left = `${left}px`;
+      } else {
+        videoSettingsBox.style.position = "fixed";
+        videoSettingsBox.style.top = "10px";
+        videoSettingsBox.style.left = "10px";
+        videoSettingsBox.style.bottom = "auto";
+      }
+    }
+
+    function setupFieldsFor(el) {
+      const isYouTube = el.tagName === "IFRAME" && el.src.includes("youtube.com");
+      const isVideo = el.tagName === "VIDEO";
+
+      fieldsContainer.innerHTML = "";
+
+      const aspectOptions = ["1:1", "4:3", "16:9", "9:16", "3:4", "2:1"]
+        .map(ratio => `<option value="${ratio}">${ratio}</option>`).join("");
+
+      const widthOptions = ["small", "middle", "large", "full"]
+        .map(w => `<option value="${w}">${w}</option>`).join("");
+
+        const radiusOptions = ["0px", "5px", "7px", "10px", "15px", "20px", "25px"]
+        .map(b => `<option value="${b}">${b}</option>`).join("");
+
+      const galleryIcon = ``;
+
+      if (isYouTube) {
+        fieldsContainer.innerHTML = `
+          <label>YouTube Link:
+            <input type="text" id="ytLink" value="${el.src}" />
+            ${galleryIcon}
+          </label>
+          <label>En-Boy Oranı:
+            <select id="ytAspect">${aspectOptions}</select>
+          </label>
+          <label>Genişlik:
+            <select id="ytWidth">${widthOptions}</select>
+          </label>
+          <label>Border Radius:
+            <select id="ytRadiusS">${radiusOptions}</select>
+          </label>
+        `;
+
+        fieldsContainer.querySelector("#ytLink").addEventListener("input", e => {
+          el.src = convertYouTubeToEmbed(e.target.value);
+        });
+        fieldsContainer.querySelector("#ytAspect").addEventListener("change", e => {
+          applyAspectRatio(el, e.target.value);
+        });
+        fieldsContainer.querySelector("#ytWidth").addEventListener("change", e => {
+          applyWidth(el, e.target.value);
+        });
+        fieldsContainer.querySelector("#ytRadiusS").addEventListener("change", e => {
+          applyRadius(el, e.target.value);
+        });
+        fieldsContainer.querySelector("#ytRadius").addEventListener("input", e => {
+          el.style.borderRadius = `${e.target.value}px`;
+        });
+      }
+
+      if (isVideo) {
+        fieldsContainer.innerHTML = `
+          <label>Video Link:
+            <input type="text" id="vidLink" value="${el.src}"  />
+            ${galleryIcon}
+          </label>
+          <label><input type="checkbox" id="vidControls" ${el.controls ? "checked" : ""}> Controls</label>
+          <label><input type="checkbox" id="vidMuted" ${el.muted ? "checked" : ""}> Muted</label>
+          <label><input type="checkbox" id="vidAutoplay" ${el.autoplay ? "checked" : ""}> Autoplay</label>
+          <label><input type="checkbox" id="vidLoop" ${el.loop ? "checked" : ""}> Loop</label>
+          <label>Poster:
+            <input type="text" id="vidPoster" value="${el.poster || ''}" />
+          </label>
+          <label>En-Boy Oranı:
+            <select id="vidAspect">${aspectOptions}</select>
+          </label>
+          <label>Genişlik:
+            <select id="vidWidth">${widthOptions}</select>
+          </label>
+          <label>Border Radius:
+            <select id="vidRadiusS">${radiusOptions}</select>
+          </label>
+        `;
+
+        fieldsContainer.querySelector("#vidLink").addEventListener("input", e => {
+          el.src = e.target.value;
+        });
+        fieldsContainer.querySelector("#vidControls").addEventListener("change", e => {
+          el.controls = e.target.checked;
+        });
+        fieldsContainer.querySelector("#vidMuted").addEventListener("change", e => {
+          el.muted = e.target.checked;
+        });
+        fieldsContainer.querySelector("#vidAutoplay").addEventListener("change", e => {
+          el.autoplay = e.target.checked;
+        });
+        fieldsContainer.querySelector("#vidLoop").addEventListener("change", e => {
+          el.loop = e.target.checked;
+        });
+        fieldsContainer.querySelector("#vidPoster").addEventListener("input", e => {
+          el.poster = e.target.value;
+        });
+        fieldsContainer.querySelector("#vidAspect").addEventListener("change", e => {
+          applyAspectRatio(el, e.target.value);
+        });
+        fieldsContainer.querySelector("#vidWidth").addEventListener("change", e => {
+          applyWidth(el, e.target.value);
+        });
+        fieldsContainer.querySelector("#vidRadiusS").addEventListener("change", e => {
+         applyRadius(el, e.target.value);
+        });
+        fieldsContainer.querySelector("#vidRadius").addEventListener("input", e => {
+          el.style.borderRadius = `${e.target.value}px`;
+        });
+      }
+    }
+
+    function applyAspectRatio(el, ratio) {
+      const [w, h] = ratio.split(":").map(Number);
+      if (!w || !h) return;
+      el.style.aspectRatio = `${w} / ${h}`;
+    }
+
+    function applyWidth(el, width) {
+      const widthMap = {
+        small: "800px",
+        middle: "1000px",
+        large: "1200px",
+        full: "1500px"
+      };
+      el.style.maxWidth = widthMap[width] || "100%";
+    }
+    function applyRadius(el, r) {
+      
+      el.style.borderRadius = r;
+    }
+    function convertYouTubeToEmbed(url) {
+      try {
+        const videoIdMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        if (videoIdMatch && videoIdMatch[1]) {
+          return `https://www.youtube.com/embed/${videoIdMatch[1]}`;
+        }
+      } catch (e) {}
+      return url;
+    }
+  </script>
+</body>
+</html>
