@@ -1,0 +1,69 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");
+*{
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+}
+#adminEditotHeader{
+ width: 100%;
+ max-width: fit-content;
+ border: 2px solid gainsboro;
+ border-radius: 50px;
+ padding: 10px 15px;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: 15px;
+ margin: 10px auto;
+ background-color: rgb(24, 24, 24);
+ font-size: large;
+ color: white;
+
+ position: fixed;
+ bottom: 20px;
+ left: 50%;
+ transform: translateX(-50%);
+}
+#saveBtn{
+}
+header{
+    width: 100%;
+    height: 64px;
+    border: 1px solid gainsboro;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 50px;
+}
+
+footer{
+    width: 100%;
+    height: 264px;
+    background-color: cornflowerblue;
+    border-top: 1px solid gainsboro;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 50px;
+}
+
+
+.container{
+    width: 100%;
+    max-width: 900px;
+   min-height: 100vh;
+    margin: 20px auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+main{
+    flex: 3;
+    padding: 10px;
+}
+aside{
+    flex: 1;
+    padding: 10px;
+    border: 1px solid gray;
+}
