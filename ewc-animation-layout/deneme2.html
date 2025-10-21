@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2 ve 3 Kutu Animasyonu</title>
+    <style>
+      
+        .container2 {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .container3 {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+        .box {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            border-radius: 5px;
+            border: 1px solid gray;
+        }
+
+        /* 2 kutu animasyonları */
+         .soldanUste2 {
+            background-color: red;
+            animation: soldanUsteAnim2 2s linear infinite alternate ;
+        }
+         .sagdanAlta2 {
+            background-color: purple;
+            animation: sagdanAltaAnim2 2s linear infinite alternate;
+        }
+         .sagdanUste2 {
+            background-color: blue;
+            animation: sagdanUsteAnim2 2s  linear infinite alternate ;
+        }
+         .soldanAlta2 {
+            background-color: orange;
+            animation: soldanAltaAnim2 2s  linear infinite alternate ;
+        }
+        /* 3 kutu animasyonları */
+        .soldanOrtaya3 {
+            background-color: yellow;
+            animation: soldanOrtayaAnim 2s infinite alternate;
+        }
+        .ortadanUste3 {
+            background-color: cyan;
+            animation: ortadanUsteAnim 2s infinite alternate;
+        }
+        .ortadanAlta3 {
+            background-color: brown;
+            animation: ortadanAltaAnim 2s infinite alternate;
+        }
+        .sagdanOrtaya3 {
+            background-color: pink;
+            animation: sagdanOrtayaAnim 2s infinite alternate;
+        }
+        .soldanUste3 {
+            background-color: red;
+            animation: soldanUsteAnim3 2s linear infinite alternate ;
+        }
+        .ortadanOrtaya3 {
+            background-color: green;
+            animation: ortadanOrtayaAnim3 2s infinite alternate;
+        }
+         .sagdanAlta3 {
+            background-color: purple;
+            animation: sagdanAltaAnim3 2s linear infinite alternate;
+        }
+        .soldanAlta3 {
+            background-color: red;
+            animation: soldanAltaAnim3 2s linear infinite alternate ;
+        }
+         .sagdanUste3 {
+            background-color: purple;
+            animation: sagdanUsteAnim3 2s linear infinite alternate;
+        }
+        .ortadanAlta3 {
+            background-color: green;
+            animation: ortadanAltaAnim3 2s linear infinite alternate;
+        }
+         .sagdanOrtaya3 {
+            background-color: purple;
+            animation: sagdanOrtayaAnim3 2s linear infinite alternate;
+        }
+        .soldanOrtaya3 {
+            background-color: red;
+            animation: soldanOrtayaAnim3 2s linear infinite alternate ;
+        }
+       .ortadanUste3 {
+            background-color: green;
+            animation: ortadanUsteAnim3 2s linear infinite alternate;
+        }
+
+
+        /* 2 Box Animasyonları */
+        @keyframes soldanUsteAnim2 {
+            0% {
+                left: 0px;
+                top: 25px
+            }
+
+            100% {
+                left: 25px;
+                top: 0px;
+            }
+        }
+        @keyframes sagdanAltaAnim2 {
+            0% {
+                right: 0px;
+                bottom: 25px
+            }
+
+            100% {
+                right: 25px;
+                bottom: 0px;
+            }
+        }
+        @keyframes sagdanUsteAnim2 {
+            0% {
+                right: 0px;
+                top: 25px
+            }
+
+            100% {
+                right: 25px;
+                top: 0px;
+            }
+        }
+        @keyframes soldanAltaAnim2 {
+            0% {
+                left: 0px;
+                bottom: 25px;
+            }
+
+            100% {
+                left: 25px;
+                bottom: 0px;
+            }
+        }
+        /* 3 Box Animasyonları */
+        @keyframes soldanUsteAnim3 {
+            0% {
+                left: 0px;
+                top: 50px;
+            }
+
+            100% {
+                left: 50px;
+                top: 0px;
+            }
+        }
+        @keyframes ortadanOrtayaAnim3 {
+            0% {
+                left: 50px;
+                top: 50px;
+            }
+
+            100% {
+                left: 50px;
+                top: 50px;
+            }
+        }
+        @keyframes sagdanAltaAnim3 {
+           0% {
+                right: 0px;
+                bottom: 50px
+            }
+
+            100% {
+                right: 50px;
+                bottom: 0px;
+            }
+        }
+        @keyframes soldanAltaAnim3 {
+            0% {
+                left: 0px;
+                bottom: 50px;
+            }
+
+            100% {
+                left: 50px;
+                bottom: 0px;
+            }
+        }
+        @keyframes sagdanUsteAnim3 {
+           0% {
+                right: 0px;
+                top: 50px
+            }
+
+            100% {
+                right: 50px;
+                top: 0px;
+            }
+        }
+        @keyframes ortadanAltaAnim3 {
+            0% {
+                left: 50px;
+                bottom: 50px;
+            }
+
+            100% {
+                left: 50px;
+                bottom: 0px;
+            }
+        }
+        @keyframes sagdanOrtayaAnim3 {
+           0% {
+                right: 0px;
+                top: 50px
+            }
+
+            100% {
+                right: 50px;
+                top: 50px;
+            }
+        }
+        @keyframes soldanOrtayaAnim3 {
+            0% {
+                left: 0px;
+                top: 50px;
+            }
+
+            100% {
+                left: 50px;
+                top: 50px;
+            }
+        }
+        @keyframes ortadanUsteAnim3 {
+            0% {
+                left: 50px;
+                top: 50px;
+            }
+
+            100% {
+                left: 50px;
+                top: 0px;
+            }
+        }
+       
+    </style>
+</head>
+
+<body>
+    <div class="container2 container">
+        <div class="box soldanUste2">sol</div>
+        <div class="box sagdanAlta2">sag</div>
+    </div>
+
+    <div class="container2 container">
+        <div class="box soldanAlta2">sol</div>
+        <div class="box sagdanUste2">sag</div>
+    </div>
+
+    <div class="container3 container">
+        <div class="box soldanUste3" style="background-color: red;">sol</div>
+        <div class="box ortadanOrtaya3" style="background-color: rgb(4, 255, 0);">orta</div>
+        <div class="box sagdanAlta3" style="background-color: rgb(0, 255, 200);">sag</div>
+    </div>
+
+    <div class="container3 container">
+        <div class="box soldanAlta3" style="background-color: rgb(0, 255, 76);">sol</div>
+        <div class="box ortadanOrtaya3" style="background-color: rgb(0, 217, 255);">orta</div>
+        <div class="box sagdanUste3" style="background-color: rgb(251, 255, 0);">sag</div>
+    </div>
+
+  <div class="container3 container">
+        <div class="box soldanUste3">sol</div>
+        <div class="box ortadanAlta3">orta</div>
+        <div class="box sagdanOrtaya3">sag</div>
+    </div>
+
+    <div class="container3 container">
+        <div class="box soldanOrtaya3">sol</div>
+        <div class="box ortadanAlta3">orta</div>
+        <div class="box sagdanUste3">sag</div>
+    </div>
+    <div class="container3 container">
+        <div class="box soldanOrtaya3">sol</div>
+        <div class="box ortadanUste3">orta</div>
+        <div class="box sagdanAlta3">sag</div>
+    </div>
+
+    <div class="container3 container">
+       <div class="box soldanAlta3">sol</div>
+        <div class="box ortadanUste3">orta</div>
+        <div class="box sagdanOrtaya3">sag</div>
+    </div>
+</body>
+
+</html>

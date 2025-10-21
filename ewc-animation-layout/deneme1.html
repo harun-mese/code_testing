@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Row → Column Animasyonu</title>
+<style>
+  body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 50px;
+  }
+
+  .container {
+    position: relative;
+    width: 200px;
+    height: 250px;
+    border: 1px solid #ccc;
+  }
+
+  .box {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    border-radius: 8px;
+  }
+
+  /* Renkler */
+  .ust { background-color: red; }
+  .orta { background-color: green; }
+  .alt { background-color: blue; }
+
+  /* Animasyonlar: row → column dönüşümü */
+  /* Container 1 */
+  .container:nth-child(1) .ust { left: 0; top: 100px; animation: ust1 4s infinite; }
+  .container:nth-child(1) .alt { left: 100px; top: 100px; animation: alt1 4s infinite; }
+
+  /* Container 2 */
+  .container:nth-child(2) .alt { left: 0; top: 100px; animation: alt1 4s infinite; }
+  .container:nth-child(2) .ust { left: 100px; top: 100px; animation: ust1 4s infinite; }
+
+  /* Container 3 */
+  .container:nth-child(3) .ust { left: 0; top: 100px; animation: ust3 4s infinite; }
+  .container:nth-child(3) .orta { left: 70px; top: 100px; animation: orta3 4s infinite; }
+  .container:nth-child(3) .alt { left: 140px; top: 100px; animation: alt3 4s infinite; }
+
+  /* Container 4 */
+  .container:nth-child(4) .alt { left: 0; top: 100px; animation: alt3 4s infinite; }
+  .container:nth-child(4) .orta { left: 70px; top: 100px; animation: orta3 4s infinite; }
+  .container:nth-child(4) .ust { left: 140px; top: 100px; animation: ust3 4s infinite; }
+
+  /* Container 5 */
+  .container:nth-child(5) .ust { left: 0; top: 100px; animation: ust3 4s infinite; }
+  .container:nth-child(5) .alt { left: 70px; top: 100px; animation: alt3 4s infinite; }
+  .container:nth-child(5) .orta { left: 140px; top: 100px; animation: orta3 4s infinite; }
+
+  /* Container 6 */
+  .container:nth-child(6) .orta { left: 0; top: 100px; animation: orta3 4s infinite; }
+  .container:nth-child(6) .alt { left: 70px; top: 100px; animation: alt3 4s infinite; }
+  .container:nth-child(6) .ust { left: 140px; top: 100px; animation: ust3 4s infinite; }
+
+  /* Container 7 */
+  .container:nth-child(7) .orta { left: 0; top: 100px; animation: orta3 4s infinite; }
+  .container:nth-child(7) .ust { left: 70px; top: 100px; animation: ust3 4s infinite; }
+  .container:nth-child(7) .alt { left: 140px; top: 100px; animation: alt3 4s infinite; }
+
+  /* Container 8 */
+  .container:nth-child(8) .alt { left: 0; top: 100px; animation: alt3 4s infinite; }
+  .container:nth-child(8) .ust { left: 70px; top: 100px; animation: ust3 4s infinite; }
+  .container:nth-child(8) .orta { left: 140px; top: 100px; animation: orta3 4s infinite; }
+
+  /* Keyframes */
+  @keyframes ust1 {
+    0%, 50% { left: 0; top: 100px; } 
+    25%, 75% { left: 0; top: 0; } 
+  }
+
+  @keyframes alt1 {
+    0%, 50% { left: 100px; top: 100px; } 
+    25%, 75% { left: 100px; top: 120px; } 
+  }
+
+  @keyframes ust3 {
+    0%, 50% { left: 0; top: 100px; }
+    25%, 75% { left: 0; top: 0; }
+  }
+
+  @keyframes orta3 {
+    0%, 50% { left: 70px; top: 100px; }
+    25%, 75% { left: 70px; top: 60px; }
+  }
+
+  @keyframes alt3 {
+    0%, 50% { left: 140px; top: 100px; }
+    25%, 75% { left: 140px; top: 120px; }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="box ust"></div>
+    <div class="box alt"></div>
+  </div>
+
+  <div class="container">
+    <div class="box alt"></div>
+    <div class="box ust"></div>
+  </div>
+
+  <div class="container">
+    <div class="box ust"></div>
+    <div class="box orta"></div>
+    <div class="box alt"></div>
+  </div>
+
+  <div class="container">
+    <div class="box alt"></div>
+    <div class="box orta"></div>
+    <div class="box ust"></div>
+  </div>
+
+  <div class="container">
+    <div class="box ust"></div>
+    <div class="box alt"></div>
+    <div class="box orta"></div>
+  </div>
+
+  <div class="container">
+    <div class="box orta"></div>
+    <div class="box alt"></div>
+    <div class="box ust"></div>
+  </div>
+
+  <div class="container">
+    <div class="box orta"></div>
+    <div class="box ust"></div>
+    <div class="box alt"></div>
+  </div>
+
+  <div class="container">
+    <div class="box alt"></div>
+    <div class="box ust"></div>
+    <div class="box orta"></div>
+  </div>
+</body>
+</html>
