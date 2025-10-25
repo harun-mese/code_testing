@@ -24,7 +24,15 @@
  left: 50%;
  transform: translateX(-50%);
 }
+#adminEditotHeader .bi{
+    cursor: pointer;
+}
 #saveBtn{
+    border: 1px solid gainsboro;
+    border-radius: 20px;
+    background-color: antiquewhite;
+    color: black;
+    padding: 3px 7px;
 }
 header{
     width: 100%;
