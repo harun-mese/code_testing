@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dalga Şeklinde Ok</title>
+<style>
+.container {
+  position: relative;
+  margin: 60px auto;
+  border: 1px dashed #ccc;
+  padding: 20px;
+}
+
+.box {
+  position: relative;
+  top: 50px;
+  left: 100px;
+  display: inline-block;
+  width: 10em;
+}
+
+h1 {
+  font-size: 4.2rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+img {
+  width: 1em;
+  height: 1em;
+}
+
+.arrow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.arrow path {
+  stroke-dasharray: 8;
+  animation: moveWave 1.5s linear infinite;
+}
+
+@keyframes moveWave {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -16; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="box1" class="box">
+    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Velit libero minus ratione, deserunt eius minima!
+  </div>
+  <h1>
+    Lorem, ipsum dolor
+    <img id="box2" src="https://picsum.photos/200/300" alt="image" />
+    sit amet consectetur adipisicing elit. Libero voluptas excepturi rerum.
+  </h1>
+
+  <svg id="arrow" class="arrow">
+    <defs>
+      <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto">
+        <polygon points="0 0, 6 3, 0 6" fill="black" />
+      </marker>
+    </defs>
+    <path d="" stroke="black" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+  </svg>
+</div>
+
+<script>
+const box1 = document.getElementById("box1");
+const box2 = document.getElementById("box2");
+const path = document.querySelector("#arrow path");
+
+function updateArrow() {
+  const rect1 = box1.getBoundingClientRect();
+  const rect2 = box2.getBoundingClientRect();
+  const containerRect = document.querySelector(".container").getBoundingClientRect();
+
+  const x1 = rect1.left + rect1.width  - containerRect.left;
+  const y1 = rect1.top + rect1.height / 2 - containerRect.top;
+  const x2 = rect2.left  - containerRect.left ;
+  const y2 = rect2.top  - containerRect.top;
+
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const length = Math.hypot(dx, dy);
+  const steps = Math.max(4, Math.floor(length / length)); // dalga sayısı
+  const curveAmplitude = Math.min(25, length / 5);   // dalga yüksekliği
+
+  let pathData = `M ${x1},${y1}`;
+  for (let i = 1; i <= steps; i++) {
+    const t = i / steps;
+    const xm = x1 + dx * t;
+    const ym = y1 + dy * t;
+    const offset = (i % 2 === 0 ? -1 : 1) * curveAmplitude;
+    const cx = x1 + dx * (t - 1 / (2 * steps));
+    const cy = y1 + dy * (t - 1 / (2 * steps)) + offset;
+    pathData += ` Q ${cx},${cy} ${xm},${ym}`;
+  }
+
+  path.setAttribute("d", pathData);
+}
+
+updateArrow();
+window.addEventListener("resize", updateArrow);
+</script>
+</body>
+</html>

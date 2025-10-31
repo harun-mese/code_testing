@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Köşeden Köşeye Dalgalı Ok</title>
+<style>
+.container {
+  position: relative;
+  width:fit-content;
+  min-height: auto;
+  border: 1px dashed #ccc;
+  padding:50px;
+  display: flex;
+  margin: auto auto;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.box {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  width: 200px;
+  cursor: grab;
+  user-select: none;
+  font-size: 1em;
+
+}
+
+h1 {
+  font-size: 4.2rem;
+  position: relative;
+  z-index: 2;
+  max-width: 960px;
+}
+img {
+  width: 1em;
+  height: 1em;
+}
+
+.arrow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.arrow path {
+  stroke: #111;
+  stroke-width: 2.5;
+  fill: none;
+}
+</style>
+</head>
+<body>
+
+
+
+<div class="container">
+  <div id="box1" class="box">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias officiis, cupiditate vdae, nisi natus ducimus hic consequuntur doloribus dolorem?</div>
+  <h1>
+    Lorem ipsum dolor <img id="box2" src="https://picsum.photos/200/300" alt="image" /> sit amet consectetur, adipisicing elit. Quo ullam explicabo officiis?
+  </h1>
+  
+  <svg id="arrow" class="arrow">
+    <defs>
+      <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto">
+        <polygon points="0 0, 6 3, 0 6" fill="#111" />
+      </marker>
+    </defs>
+    <path d="" marker-end="url(#arrowhead)" />
+  </svg>
+</div>
+
+<script>
+const box1 = document.getElementById("box1");
+const box2 = document.getElementById("box2");
+const path = document.querySelector("#arrow path");
+const container = document.querySelector(".container");
+
+function updateArrow() {
+  const rect1 = box1.getBoundingClientRect();
+  const rect2 = box2.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+  const margin = 15; // okun ucu resme değmesin diye
+
+  // merkezleri hesapla
+  const c1 = { x: rect1.left , y: rect1.top + rect1.height / 2 };
+  const c2 = { x: rect2.left + rect2.width / 2, y: rect2.top + rect2.height / 2 };
+  const dx = c2.x - c1.x;
+  const dy = c2.y - c1.y;
+
+  // 🔹 Div için çıkış köşesi seçimi
+  let x1, y1;
+  if (dx > 0 && dy > 0) {          // sağ alt
+    x1 = rect1.right; y1 = rect1.top;
+  } else if (dx > 0 && dy < 0) {   // sağ üst
+    x1 = rect1.right; y1 = rect1.top;
+  } else if (dx < 0 && dy > 0) {   // sol alt
+    x1 = rect1.left; y1 = rect1.bottom;
+  } else {                         // sol üst
+    x1 = rect1.left; y1 = rect1.top;
+  }
+
+  // 🔹 Resim için giriş köşesi seçimi
+  let x2, y2;
+  if (dx > 0 && dy > 0) {          // soldan yukarıya gelen
+    x2 = rect2.left - margin; y2 = rect2.top - margin;
+  } else if (dx > 0 && dy < 0) {
+    x2 = rect2.left - margin; y2 = rect2.bottom + margin;
+  } else if (dx < 0 && dy > 0) {
+    x2 = rect2.right + margin; y2 = rect2.top - margin;
+  } else {
+    x2 = rect2.right + margin; y2 = rect2.bottom + margin;
+  }
+
+  // container koordinat düzeltmesi
+  x1 -= containerRect.left;
+  y1 -= containerRect.top;
+  x2 -= containerRect.left;
+  y2 -= containerRect.top;
+
+  // Dalga oluştur
+  const ddx = x2 - x1;
+  const ddy = y2 - y1;
+  const length = Math.hypot(ddx, ddy);
+  const steps = Math.max(4, Math.floor(length / 80));
+  const curveAmplitude = Math.min(25, length / 12);
+
+  let pathData = `M ${x1},${y1}`;
+  for (let i = 1; i <= steps; i++) {
+    const t = i / steps;
+    const xm = x1 + ddx * t;
+    const ym = y1 + ddy * t;
+    const offset = (i % 2 === 0 ? -1 : 1) * curveAmplitude;
+    const cx = x1 + ddx * (t - 1 / (2 * steps));
+    const cy = y1 + ddy * (t - 1 / (2 * steps)) + offset;
+    pathData += ` Q ${cx},${cy} ${xm},${ym}`;
+  }
+
+  path.setAttribute("d", pathData);
+}
+
+updateArrow();
+window.addEventListener("resize", updateArrow);
+
+// 🎯 Sürükleme
+let isDragging = false;
+let offsetX, offsetY;
+
+box1.addEventListener("mousedown", (e) => {
+  isDragging = true;
+  offsetX = e.clientX - box1.offsetLeft;
+  offsetY = e.clientY - box1.offsetTop;
+  box1.style.cursor = "grabbing";
+});
+
+window.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+  const x = e.clientX - offsetX;
+  const y = e.clientY - offsetY;
+  const maxX = container.clientWidth - box1.offsetWidth;
+  const maxY = container.clientHeight - box1.offsetHeight;
+  box1.style.left = Math.min(Math.max(0, x), maxX) + "px";
+  box1.style.top = Math.min(Math.max(0, y), maxY) + "px";
+  updateArrow();
+});
+
+window.addEventListener("mouseup", () => {
+  isDragging = false;
+  box1.style.cursor = "grab";
+});
+</script>
+</body>
+</html>

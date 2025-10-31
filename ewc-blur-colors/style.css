@@ -1,0 +1,170 @@
+/* =========================
+   1) TEMEL TEMA DEĞİŞKENLERİ
+   ========================= */
+:root {
+  /* Semantik renkler (LIGHT varsayılan) */
+  --bg:        #f7f7fb;
+  --surface:   #ffffff;
+  --text:      #111418;
+  --muted:     #5a6676;
+  --border:    #d9dee7;
+
+  /* Aksan / durum renkleri */
+  --accent:            #3b82f6; /* mavi */
+  --accent-contrast:   #ffffff;
+  --success:           #16a34a;
+  --warning:           #f59e0b;
+  --danger:            #ef4444;
+
+  /* Cam/blur varsayılanları */
+  --blur: 12px;
+  --saturate: 140%;
+  --contrast: 1;
+  /* Light modda cam yüzeyin rengi */
+  --glass-tint: rgba(255, 255, 255, 0.6);
+  --glass-border: color-mix(in oklab, var(--border), transparent 40%);
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+
+  /* Radius ve spacing (isteğe bağlı) */
+  --radius: 16px;
+  --pad: 14px;
+}
+
+/* Karanlık tema – attribute veya sınıf ile tetikleyebilirsin */
+[data-theme="dark"], .theme-dark {
+  --bg:        #0b0c10;
+  --surface:   #111317;
+  --text:      #e8ebf0;
+  --muted:     #a0a7b3;
+  --border:    #23262d;
+
+  /* Dark için cam yüzey */
+  --glass-tint: rgba(17, 19, 23, 0.5);
+  --glass-border: color-mix(in oklab, var(--border), transparent 55%);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Tarayıcı tercihini otomatik izlemek istersen: */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:        #0b0c10;
+    --surface:   #111317;
+    --text:      #e8ebf0;
+    --muted:     #a0a7b3;
+    --border:    #23262d;
+
+    --glass-tint: rgba(17, 19, 23, 0.5);
+    --glass-border: color-mix(in oklab, var(--border), transparent 55%);
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* =========================
+   2) RENK TEMA “PAKETLERİ”
+   - İstediğini body'ye sınıf olarak ekle
+   ========================= */
+.theme-ocean {        /* mavimsi ferah */
+  --accent: #0ea5e9;
+}
+.theme-forest {       /* yeşil doğa */
+  --accent: #22c55e;
+}
+.theme-sunset {       /* turuncu sıcak */
+  --accent: #f97316;
+}
+.theme-grape {        /* mor asil */
+  --accent: #8b5cf6;
+}
+.theme-rose {         /* pembemsi */
+  --accent: #f43f5e;
+}
+.theme-gold {         /* sarı altın */
+  --accent: #eab308;
+}
+
+/* Accent kontrastı otomatik tutmak için istersen küçük bir kural: */
+.accent-on-dark { --accent-contrast: #0b0c10; }
+.accent-on-light { --accent-contrast: #ffffff; }
+
+/* =========================
+   3) GLASS / BLUR ARKA PLAN SINIFLARI
+   ========================= */
+
+/* Esas sınıf: cam panel */
+.bg-blur {
+  background: var(--glass-tint);
+  backdrop-filter: blur(var(--blur)) saturate(var(--saturate)) contrast(var(--contrast));
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--saturate)) contrast(var(--contrast));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+}
+
+/* İç boşluk ve kenarlık için küçük yardımcılar */
+.bg-blur.padded   { padding: var(--pad); }
+.bg-blur.rounded  { border-radius: var(--radius); }
+
+/* IŞIK/TİNTS – arkadaki görselin tonunu açık/koyu itmek için */
+.tint-light { --glass-tint: color-mix(in oklab, #fff 70%, transparent); }
+.tint-dark  { --glass-tint: color-mix(in oklab, #000 60%, transparent); }
+
+/* Şiddet ayarları: sadece --blur ve şeffaflığı oynuyoruz */
+.blur-0  { --blur: 0px; }
+.blur-2  { --blur: 2px; }
+.blur-4  { --blur: 4px; }
+.blur-8  { --blur: 8px; }
+.blur-12 { --blur: 12px; }
+.blur-16 { --blur: 16px; }
+.blur-24 { --blur: 24px; }
+.blur-32 { --blur: 32px; }
+
+/* Cam yoğunluğu: arka plan opaklığını değiştir (light & dark ile uyumlu) */
+.glass-soft  { --glass-tint: color-mix(in oklab, var(--glass-tint) 70%, transparent); }
+.glass       { /* default */ }
+.glass-strong{ --glass-tint: color-mix(in oklab, var(--glass-tint) 100%, rgba(0,0,0,0.0)); }
+
+/* Vurgulu cam – accent renkli saydam panel */
+.bg-blur-accent {
+  --_accentGlass: color-mix(in oklab, var(--accent) 30%, transparent);
+  background: var(--_accentGlass);
+  backdrop-filter: blur(var(--blur)) saturate(calc(var(--saturate) * 1.05));
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(calc(var(--saturate) * 1.05));
+  border: 1px solid color-mix(in oklab, var(--accent), transparent 65%);
+  color: var(--accent-contrast);
+}
+
+/* Kart/surface yardımcıları */
+.surface { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); }
+.text    { color: var(--text); }
+.muted   { color: var(--muted); }
+.border  { border: 1px solid var(--border); }
+.btn-accent {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-radius: 10px;
+  padding: 10px 14px;
+  border: none;
+}
+.btn-accent:hover {
+  filter: brightness(1.05);
+}
+
+/* =========================
+   4) BACKDROP FİLTRE DESTEK YOKSA FALBACK
+   ========================= */
+@supports not (backdrop-filter: blur(1px)) {
+  .bg-blur, .bg-blur-accent {
+    /* En azından saydam bir yüzey kalsın */
+    background: color-mix(in oklab, var(--glass-tint) 85%, transparent);
+  }
+}
+
+/* =========================
+   5) KULLANIMDA İŞE YARAYAN KÜÇÜK LAYOUT YARDIMCILARI
+   ========================= */
+.container { background: var(--bg); color: var(--text); min-height: 100dvh; }
+.center {
+  display: grid; place-items: center;
+}
+.max-w-640 { max-width: 640px; }
+.w-100 { width: 100%; }
