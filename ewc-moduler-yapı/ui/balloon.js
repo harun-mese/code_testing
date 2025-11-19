@@ -1,40 +1,45 @@
 import { DOM } from "../core/dom.js";
 import { State } from "../core/state.js";
 import { BalloonPosition } from "./balloon-position.js";
-import { Icons } from "./icons.js";
 import { commands } from "../core/commands.js";
 
+import { BalloonTextUI } from "./balloon-ui-text.js";
+import { BalloonElementUI } from "./balloon-ui-element.js";
+
 export const Balloon = {
+
   init() {
     const el = DOM.create("div", "ewc-balloon hidden");
-    el.innerHTML = `
-      <button data-cmd="bold">${Icons.bold}</button>
-      <button data-cmd="italic">${Icons.italic}</button>
-      <button data-cmd="underline">${Icons.underline}</button>
-      <div class="line"></div>
-      <button data-cmd="addParagraph">${Icons.paragraph}</button>
-      <button data-cmd="addHeading">${Icons.heading}</button>
-      <button data-cmd="addImage">${Icons.image}</button>
-      <button data-cmd="settings">${Icons.settings}</button>
-    `;
     document.body.appendChild(el);
+    State.balloon = el;
 
     DOM.on(el, "click", e => {
-      if (e.target.closest("button")) {
-        const cmd = e.target.closest("button").dataset.cmd;
-        if (commands[cmd]) commands[cmd]();
-      }
-    });
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      const cmd = btn.dataset.cmd;
 
-    State.balloon = el;
+      if (commands[cmd]) commands[cmd]();
+    });
   },
 
-  show(target) {
-    State.selectedEl = target;
-
-    const pos = BalloonPosition.calc(target, State.iframe);
-
+  show(target, mode = "element") {
     const balloon = State.balloon;
+
+    // UI değiştir
+    if (mode === "text") {
+      balloon.innerHTML = BalloonTextUI;
+    } else {
+      balloon.innerHTML = BalloonElementUI;
+    }
+
+    // pozisyon hesaplama
+    let pos;
+    if (mode === "text") {
+      pos = BalloonPosition.calcSelection(State.iframe);
+    } else {
+      pos = BalloonPosition.calc(target, State.iframe);
+    }
+
     balloon.style.top = pos.top + "px";
     balloon.style.left = pos.left + "px";
     balloon.classList.remove("hidden");
