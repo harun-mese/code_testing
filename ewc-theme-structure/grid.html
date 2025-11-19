@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+.grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* Ortadaki kolon genişliği otomatik */
+}
+
+.center {
+  max-width: 800px;
+  width: 100%;           /* max-width'e kadar genişlesin */
+  margin: 0 auto;        /* ortala */
+  background: #ffeaa7;
+}
+
+.left { background:#fab1a0; }
+.right { background:#74b9ff; }
+.middle { background:#55efc4; }
+    </style>
+</head>
+<body>
+    <div class="grid-layout">
+  <div class="left">Sol</div>
+  <div class="middle">Orta</div>
+  <div class="right">Sağ</div>
+</div>
+
+</body>
+</html>

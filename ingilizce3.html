@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mini Grammar Lab</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 24px;
+      background: #f7f7fb;
+      color: #222;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .app-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      border: 1px solid #ececec;
+    }
+
+    .sentence-box {
+      font-size: 28px;
+      margin-bottom: 14px;
+    }
+
+    .word {
+      padding: 4px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease, box-shadow 0.15s ease;
+      display: inline-block;
+    }
+    .word:hover {
+      background: #eef2ff;
+      box-shadow: 0 0 0 1px #c7d2fe;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .control-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      margin-right: 4px;
+    }
+
+    .tense-buttons button {
+      border: 1px solid #d4d4d8;
+      background: #fafafa;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tense-buttons button.active {
+      background: #4f46e5;
+      color: #fff;
+      border-color: #4f46e5;
+    }
+
+    .tense-buttons button:hover {
+      background: #e4e4ff;
+    }
+
+    .toggle-btn {
+      border: 1px solid #d4d4d8;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 12px;
+      background: #fafafa;
+      transition: all 0.15s ease;
+    }
+
+    .toggle-btn.active {
+      background: #4f46e5;
+      color: #fff;
+      border-color: #4f46e5;
+    }
+
+    .toggle-btn.negative {
+      background: #fee2e2;
+      border-color: #f97373;
+      color: #b91c1c;
+    }
+
+    .select-like {
+      border: 1px solid #d4d4d8;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      background: #fafafa;
+      cursor: pointer;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4338ca;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #4f46e5;
+      margin-right: 4px;
+    }
+
+    /* Word menu */
+    .word-menu {
+      position: absolute;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 6px;
+      z-index: 1000;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+      min-width: 120px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .word-option {
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 13px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .word-option:hover {
+      background: #f3f4ff;
+    }
+
+    .sentence-extra {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #555;
+    }
+
+    /* Info panel */
+    .info-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .info-tense-label {
+      font-weight: 600;
+      color: #4f46e5;
+      margin-bottom: 2px;
+      font-size: 13px;
+    }
+
+    .info-pattern {
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 13px;
+      background: #f4f4ff;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin: 6px 0 10px;
+    }
+
+    .info-desc {
+      font-size: 13px;
+      color: #444;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .examples-list {
+      list-style: none;
+      padding-left: 14px;
+      margin: 0;
+      font-size: 13px;
+      color: #333;
+    }
+    .examples-list li::before {
+      content: "• ";
+      margin-left: -10px;
+      margin-right: 4px;
+      color: #4f46e5;
+    }
+
+    @media (max-width: 900px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  .wm-row {
+  margin-bottom: 10px;
+}
+
+.wm-row input, .wm-row select, .wm-row textarea {
+  width: 100%;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.wm-row button {
+  margin-top: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  background: #4f46e5;
+  color: white;
+}
+
+.wm-list {
+  border: 1px solid #eee;
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fbfbff;
+}
+
+.wm-item {
+  padding: 4px 0;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.wm-item button {
+  background: #e11d48;
+  color: white;
+  border: none;
+  padding: 0 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.wm-reset {
+  width: 100%;
+  background: #b91c1c !important;
+  margin-top: 10px;
+}
+
+  </style>
+</head>
+<body>
+
+  <h1>Mini Grammar Lab</h1>
+  <div class="subtitle">
+    Kelimelere tıkla → değiştir. Zamanı, olumluluk/olumsuzluğu, modal, WH-question, passive, zaman & yer zarflarını değiştir, cümle otomatik doğru İngilizceye dönüşsün.
+  </div>
+
+  <div class="app-layout">
+    <!-- LEFT -->
+    <div class="card">
+      <div class="sentence-box">
+        <span class="word wh" data-type="wh" style="display:none;"></span>
+        <span class="word aux-before" data-type="aux-before" style="display:none;"></span>
+        <span class="word subject" data-type="subject">I</span>
+        <span class="word modal" data-type="modal" style="display:none;"></span>
+        <span class="word aux" data-type="aux" style="display:none;"></span>
+        <span class="word verb" data-type="verb">eat</span>
+        <span class="word object" data-type="object">apples</span>
+        <span class="word place-adv" data-type="place" style="display:none;"></span>
+        <span class="word time-adv" data-type="time" style="display:none;"></span>
+        <span id="questionMark"></span>
+      </div>
+      <div class="sentence-extra" id="sentenceExtra"></div>
+
+      <div class="controls">
+        <!-- Tense -->
+        <div class="control-group">
+          <span class="control-label">Tense:</span>
+          <div class="tense-buttons">
+            <button data-tense="present_simple" class="active">Pres. Simple</button>
+            <button data-tense="present_continuous">Pres. Cont.</button>
+            <button data-tense="past_simple">Past Simple</button>
+            <button data-tense="past_continuous">Past Cont.</button>
+            <button data-tense="future_will">Future (will)</button>
+            <button data-tense="future_going">Future (going to)</button>
+            <button data-tense="present_perfect">Pres. Perfect</button>
+            <button data-tense="past_perfect">Past Perfect</button>
+          </div>
+        </div>
+
+        <!-- Polarity & Question & Passive -->
+        <div class="control-group">
+          <span class="control-label">Form:</span>
+          <button id="negBtn" class="toggle-btn">Positive</button>
+          <button id="qBtn" class="toggle-btn">Statement</button>
+          <button id="passiveBtn" class="toggle-btn">Active</button>
+        </div>
+
+        <!-- Modal -->
+        <div class="control-group">
+          <span class="control-label">Modal:</span>
+          <span class="select-like word" data-type="modal-control" id="modalControl">
+            <span class="badge">
+              <span class="badge-dot"></span>
+              <span id="modalLabel">None</span>
+            </span>
+          </span>
+        </div>
+
+        <!-- WH Question -->
+        <div class="control-group">
+          <span class="control-label">WH:</span>
+          <span class="select-like word" data-type="wh-control" id="whControl">
+            <span id="whLabel">(none)</span>
+          </span>
+        </div>
+
+        <!-- Time & Place Adverbs -->
+        <div class="control-group">
+          <span class="control-label">Time:</span>
+          <span class="select-like word" data-type="time-control" id="timeControl">
+            <span id="timeLabel">(none)</span>
+          </span>
+        </div>
+        <div class="control-group">
+          <span class="control-label">Place:</span>
+          <span class="select-like word" data-type="place-control" id="placeControl">
+            <span id="placeLabel">(none)</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Info panel -->
+    <div class="card">
+      <div class="info-title">Grammar Info</div>
+      <div id="tenseLabel" class="info-tense-label">Present Simple</div>
+      <div id="pattern" class="info-pattern">S + V(s) + O (+ Place/Time)</div>
+      <div id="tenseDesc" class="info-desc">
+        Present Simple: Genel gerçekler, rutinler ve alışkanlıklar için kullanılır. (I work, She lives, They play...)
+      </div>
+      <div class="info-label" style="font-size:13px;font-weight:600;margin-bottom:4px;">Examples</div>
+      <ul id="examples" class="examples-list"></ul>
+    </div>
+  </div>
+<div class="card">
+  <h3>Words Manager</h3>
+
+  <div class="wm-row">
+    <label>Category:</label>
+    <select id="wmCategory">
+      <option value="subjects">Subjects</option>
+      <option value="verbs">Verbs</option>
+      <option value="objects">Objects</option>
+      <option value="time">Time Adverbs</option>
+      <option value="place">Place Adverbs</option>
+    </select>
+  </div>
+
+  <div class="wm-row">
+    <input id="wmInput" type="text" placeholder="Add a word..." />
+    <button id="wmAddBtn">Add</button>
+  </div>
+
+  <div class="wm-row">
+    <textarea id="wmTextarea" placeholder="One word per line..."></textarea>
+    <button id="wmAddListBtn">Add List</button>
+  </div>
+
+  <div class="wm-list" id="wmList"></div>
+
+  <button id="wmResetBtn" class="wm-reset">Reset This Category</button>
+</div>
+
+  <script>
+    // --- DATA ---
+
+    const irregulars = {
+      eat:  { past: "ate",   pp: "eaten" },
+      go:   { past: "went",  pp: "gone" },
+      see:  { past: "saw",   pp: "seen" },
+      make: { past: "made",  pp: "made" },
+      take: { past: "took",  pp: "taken" },
+      come: { past: "came",  pp: "come" },
+      play: { past: "played", pp: "played" },
+      watch:{ past: "watched", pp:"watched" },
+      read: { past: "read", pp: "read" }
+    };
+
+    const subjects = ["I", "You", "He", "She", "It", "We", "They"];
+    const verbs = ["eat", "go", "see", "make", "take", "come", "play", "watch", "read"];
+    const objects = ["apples", "pizza", "a book", "the car", "music", "football", "TV", "breakfast"];
+    const modals = ["(none)", "can", "could", "may", "might", "should", "must", "have to", "need to", "would"];
+
+    const modalNegatives = {
+      can: "can't",
+      could: "couldn't",
+      may: "may not",
+      might: "might not",
+      should: "shouldn't",
+      must: "mustn't",
+      "have to": "don't have to",
+      "need to": "don't need to",
+      would: "wouldn't"
+    };
+
+    const whWords = ["(none)", "What", "Where", "When", "Why", "How", "Who"];
+
+    const adverbsTime = [
+      "(none)",
+      "every day",
+      "usually",
+      "often",
+      "now",
+      "today",
+      "yesterday",
+      "last night",
+      "tomorrow",
+      "next week",
+      "for two years",
+      "since 2010"
+    ];
+
+    const adverbsPlace = [
+      "(none)",
+      "at home",
+      "at school",
+      "at work",
+      "in the park",
+      "in London",
+      "in the kitchen",
+      "on the bus"
+    ];
+
+    const tenseInfo = {
+      present_simple: {
+        label: "Present Simple",
+        pattern: "S + V(s) + O (+ Place/Time)",
+        desc: "Genel gerçekler, rutinler ve alışkanlıklar için kullanılır.",
+        examples: [
+          "I eat breakfast every day.",
+          "She plays football at school.",
+          "They watch TV at night."
+        ]
+      },
+      present_continuous: {
+        label: "Present Continuous",
+        pattern: "S + am/is/are + V-ing + O (+ Place/Time)",
+        desc: "Şu an olan veya geçici durumlar için kullanılır.",
+        examples: [
+          "I am eating apples now.",
+          "He is watching TV at home.",
+          "They are playing football in the park."
+        ]
+      },
+      past_simple: {
+        label: "Past Simple",
+        pattern: "S + V2 + O (+ Place/Time)",
+        desc: "Geçmişte tamamlanmış eylemler için kullanılır.",
+        examples: [
+          "I ate pizza yesterday.",
+          "She watched a movie last night.",
+          "They played football at school."
+        ]
+      },
+      past_continuous: {
+        label: "Past Continuous",
+        pattern: "S + was/were + V-ing + O (+ Place/Time)",
+        desc: "Geçmişte belirli bir anda devam eden eylemler için kullanılır.",
+        examples: [
+          "I was reading a book at home.",
+          "He was watching TV at 8 o'clock.",
+          "They were playing football in the park."
+        ]
+      },
+      future_will: {
+        label: "Future (will)",
+        pattern: "S + will + V1 + O (+ Place/Time)",
+        desc: "Anlık kararlar, tahminler ve gelecek planları için kullanılır.",
+        examples: [
+          "I will eat pizza tomorrow.",
+          "She will watch TV tonight.",
+          "They will play football next week."
+        ]
+      },
+      future_going: {
+        label: "Future (going to)",
+        pattern: "S + am/is/are going to + V1 + O (+ Place/Time)",
+        desc: "Önceden planlanmış gelecek eylemler için kullanılır.",
+        examples: [
+          "I am going to eat pizza tonight.",
+          "She is going to watch a movie.",
+          "They are going to play football in the park."
+        ]
+      },
+      present_perfect: {
+        label: "Present Perfect",
+        pattern: "S + have/has + V3 + O (+ Time)",
+        desc: "Geçmişte başlayıp etkisi şimdiye kadar süren eylemler için kullanılır.",
+        examples: [
+          "I have eaten breakfast today.",
+          "She has seen that movie.",
+          "They have played football many times."
+        ]
+      },
+      past_perfect: {
+        label: "Past Perfect",
+        pattern: "S + had + V3 + O (+ Time)",
+        desc: "Geçmişte bir eylemden önce gerçekleşen başka bir eylem için kullanılır.",
+        examples: [
+          "I had eaten before I left home.",
+          "She had watched the film before the party.",
+          "They had played football before it started to rain."
+        ]
+      }
+    };
+
+    const state = {
+      subject: "I",
+      verb: "eat",
+      object: "apples",
+      tense: "present_simple",
+      isNegative: false,
+      isQuestion: false,
+      isPassive: false,
+      modal: null,
+      whWord: null,
+      timeAdv: null,
+      placeAdv: null
+    };
+
+    // --- ELEMENTS ---
+    const whEl = document.querySelector(".wh");
+    const auxBeforeEl = document.querySelector(".aux-before");
+    const subjectEl = document.querySelector(".subject");
+    const modalWordEl = document.querySelector(".modal");
+    const auxEl = document.querySelector(".aux");
+    const verbEl = document.querySelector(".verb");
+    const objectEl = document.querySelector(".object");
+    const placeEl = document.querySelector(".place-adv");
+    const timeEl = document.querySelector(".time-adv");
+    const qMarkEl = document.getElementById("questionMark");
+    const sentenceExtraEl = document.getElementById("sentenceExtra");
+
+    const negBtn = document.getElementById("negBtn");
+    const qBtn = document.getElementById("qBtn");
+    const passiveBtn = document.getElementById("passiveBtn");
+
+    const modalControl = document.getElementById("modalControl");
+    const modalLabel = document.getElementById("modalLabel");
+    const whControl = document.getElementById("whControl");
+    const whLabel = document.getElementById("whLabel");
+    const timeControl = document.getElementById("timeControl");
+    const timeLabel = document.getElementById("timeLabel");
+    const placeControl = document.getElementById("placeControl");
+    const placeLabel = document.getElementById("placeLabel");
+
+    const tenseLabelEl = document.getElementById("tenseLabel");
+    const patternEl = document.getElementById("pattern");
+    const tenseDescEl = document.getElementById("tenseDesc");
+    const examplesEl = document.getElementById("examples");
+
+    // --- HELPERS ---
+
+    function closeMenus() {
+      document.querySelectorAll(".word-menu").forEach(m => m.remove());
+    }
+
+    function showMenu(el, list, onSelect) {
+      closeMenus();
+      const menu = document.createElement("div");
+      menu.className = "word-menu";
+
+      list.forEach(item => {
+        const op = document.createElement("div");
+        op.className = "word-option";
+        op.innerText = item;
+        op.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          onSelect(item);
+          closeMenus();
+        });
+        menu.appendChild(op);
+      });
+
+      document.body.appendChild(menu);
+      const rect = el.getBoundingClientRect();
+      menu.style.left = rect.left + "px";
+      menu.style.top = rect.bottom + "px";
+    }
+
+    function getBeForm(subject) {
+      if (subject === "I") return "am";
+      if (subject === "He" || subject === "She" || subject === "It") return "is";
+      return "are";
+    }
+
+    function getBePast(subject) {
+      if (subject === "I" || subject === "He" || subject === "She" || subject === "It") return "was";
+      return "were";
+    }
+
+    function getHaveForm(subject) {
+      if (subject === "He" || subject === "She" || subject === "It") return "has";
+      return "have";
+    }
+
+    function getPastForm(verb) {
+      if (irregulars[verb]) return irregulars[verb].past;
+      if (verb.endsWith("e")) return verb + "d";
+      return verb + "ed";
+    }
+
+    function getPPForm(verb) {
+      if (irregulars[verb]) return irregulars[verb].pp;
+      if (verb.endsWith("e")) return verb + "d";
+      return verb + "ed";
+    }
+
+    function getIngForm(verb) {
+      if (verb.endsWith("e") && verb.length > 2) return verb.slice(0, -1) + "ing";
+      return verb + "ing";
+    }
+
+    function getPresentSimpleVerb(subject, verb) {
+      if (["He", "She", "It"].includes(subject)) {
+        if (verb.endsWith("y")) return verb.slice(0, -1) + "ies";
+        if (/(s|sh|ch|x)$/.test(verb)) return verb + "es";
+        return verb + "s";
+      }
+      return verb;
+    }
+
+    // --- CORE: BUILD SENTENCE ---
+
+    function buildVerbPartsActive() {
+      const { subject, verb, tense, isNegative, modal } = state;
+
+      // MODAL varsa: modal + base
+      if (modal) {
+        let modalWord = modal;
+        if (isNegative && modalNegatives[modal]) {
+          modalWord = modalNegatives[modal];
+        }
+        return {
+          auxBefore: null,
+          modal: modalWord,
+          aux: null,
+          mainVerb: verb
+        };
+      }
+
+      let auxBefore = null;
+      let aux = null;
+      let mainVerb = verb;
+
+      if (tense === "present_simple") {
+        if (isNegative) {
+          aux = (["He", "She", "It"].includes(subject)) ? "doesn't" : "don't";
+          mainVerb = verb;
+        } else {
+          mainVerb = getPresentSimpleVerb(subject, verb);
+        }
+      }
+
+      if (tense === "present_continuous") {
+        let be = getBeForm(subject);
+        if (isNegative) {
+          if (be === "am") aux = "am not";
+          else if (be === "is") aux = "isn't";
+          else aux = "aren't";
+        } else {
+          aux = be;
+        }
+        mainVerb = getIngForm(verb);
+      }
+
+      if (tense === "past_simple") {
+        if (isNegative) {
+          aux = "didn't";
+          mainVerb = verb;
+        } else {
+          mainVerb = getPastForm(verb);
+        }
+      }
+
+      if (tense === "past_continuous") {
+        let bePast = getBePast(subject);
+        if (isNegative) {
+          aux = (bePast === "was") ? "wasn't" : "weren't";
+        } else aux = bePast;
+        mainVerb = getIngForm(verb);
+      }
+
+      if (tense === "future_will") {
+        aux = isNegative ? "won't" : "will";
+        mainVerb = verb;
+      }
+
+      if (tense === "future_going") {
+        let be = getBeForm(subject);
+        if (isNegative) {
+          if (be === "am") aux = "am not going to";
+          else if (be === "is") aux = "isn't going to";
+          else aux = "aren't going to";
+        } else {
+          aux = be + " going to";
+        }
+        mainVerb = verb;
+      }
+
+      if (tense === "present_perfect") {
+        let have = getHaveForm(subject);
+        if (isNegative) aux = (have === "has") ? "hasn't" : "haven't";
+        else aux = have;
+        mainVerb = getPPForm(verb);
+      }
+
+      if (tense === "past_perfect") {
+        aux = isNegative ? "hadn't" : "had";
+        mainVerb = getPPForm(verb);
+      }
+
+      return { auxBefore, modal: null, aux, mainVerb };
+    }
+
+    function buildVerbPartsPassive(activeSubject, activeObject) {
+      // Passive sadece: present_simple, past_simple, future_will için düzgün; diğerlerinde basitleştirilmiş
+      const { tense, isNegative } = state;
+
+      const newSubject = activeObject || "the object";
+      let be, mainVerbPP, aux = null, auxBefore = null;
+
+      mainVerbPP = getPPForm(state.verb);
+
+      if (tense === "present_simple") {
+        be = getBeForm(newSubject);
+        if (isNegative) {
+          if (be === "am") aux = "am not";
+          else if (be === "is") aux = "isn't";
+          else aux = "aren't";
+        } else aux = be;
+      } else if (tense === "past_simple") {
+        be = getBePast(newSubject);
+        aux = isNegative
+          ? (be === "was" ? "wasn't" : "weren't")
+          : be;
+      } else if (tense === "future_will") {
+        aux = isNegative ? "won't be" : "will be";
+      } else {
+        // diğerleri için basit bir present passive gösterelim
+        be = getBeForm(newSubject);
+        aux = be;
+      }
+
+      return {
+        auxBefore,
+        modal: null,
+        aux,
+        mainVerb: mainVerbPP,
+        passiveSubject: newSubject,
+        byPhrase: activeSubject ? "by " + activeSubject : null
+      };
+    }
+
+    function updateSentence() {
+      const {
+        subject,
+        object,
+        isQuestion,
+        modal,
+        isPassive,
+        whWord,
+        timeAdv,
+        placeAdv
+      } = state;
+
+      let verbParts;
+      let finalSubject = subject;
+      let extraBy = null;
+
+      if (isPassive) {
+        verbParts = buildVerbPartsPassive(subject, object);
+        finalSubject = verbParts.passiveSubject;
+        extraBy = verbParts.byPhrase;
+      } else {
+        verbParts = buildVerbPartsActive();
+      }
+
+      // --- WH + Question şekli ---
+      let wh = whWord || null;
+      let isWh = !!wh && state.isQuestion;
+
+      let auxBefore = null;
+      let modalWord = verbParts.modal;
+      let aux = verbParts.aux;
+      let mainVerb = verbParts.mainVerb;
+
+      // Question form (non-modal & modal)
+      if (state.isQuestion) {
+        if (modalWord) {
+          // Modal question: (Wh) + modal + subject + base
+          auxBefore = modalWord;
+          modalWord = null;
+        } else {
+          // Normal question: (Wh) + aux/do-support + subject
+          const t = state.tense;
+          if (!aux) {
+            // do-support for present/past simple positive
+            if (t === "present_simple") {
+              auxBefore = ["He","She","It"].includes(finalSubject) ? "does" : "do";
+              mainVerb = state.verb;
+            } else if (t === "past_simple") {
+              auxBefore = "did";
+              mainVerb = state.verb;
+            }
+          } else {
+            // aux var, onu başa çek
+            auxBefore = aux;
+            aux = null;
+          }
+        }
+      }
+
+      // --- UI'ya yansıtma ---
+
+      // WH
+      if (isWh) {
+        whEl.style.display = "inline-block";
+        whEl.innerText = wh;
+      } else {
+        whEl.style.display = "none";
+        whEl.innerText = "";
+      }
+
+      // auxBefore (question inversion)
+      if (auxBefore) {
+        auxBeforeEl.style.display = "inline-block";
+        auxBeforeEl.innerText = auxBefore;
+      } else {
+        auxBeforeEl.style.display = "none";
+        auxBeforeEl.innerText = "";
+      }
+
+      // Subject
+      subjectEl.innerText = finalSubject;
+
+      // Modal (statement mode)
+      if (!state.isQuestion && modalWord) {
+        modalWordEl.style.display = "inline-block";
+        modalWordEl.innerText = modalWord;
+      } else {
+        modalWordEl.style.display = "none";
+        modalWordEl.innerText = "";
+      }
+
+      // Aux
+      if (aux) {
+        auxEl.style.display = "inline-block";
+        auxEl.innerText = aux;
+      } else {
+        auxEl.style.display = "none";
+        auxEl.innerText = "";
+      }
+
+      // Verb
+      verbEl.innerText = mainVerb;
+
+      // Object / by phrase
+      if (isPassive) {
+        // Passive: subject = old object; object = (by + subject)
+        if (extraBy) {
+          objectEl.style.display = "inline-block";
+          objectEl.innerText = extraBy;
+        } else {
+          objectEl.style.display = "none";
+          objectEl.innerText = "";
+        }
+      } else {
+        objectEl.style.display = "inline-block";
+        objectEl.innerText = object;
+      }
+
+      // Place adverb
+      if (placeAdv) {
+        placeEl.style.display = "inline-block";
+        placeEl.innerText = placeAdv;
+      } else {
+        placeEl.style.display = "none";
+        placeEl.innerText = "";
+      }
+
+      // Time adverb
+      if (timeAdv) {
+        timeEl.style.display = "inline-block";
+        timeEl.innerText = timeAdv;
+      } else {
+        timeEl.style.display = "none";
+        timeEl.innerText = "";
+      }
+
+      // Question mark
+      qMarkEl.innerText = state.isQuestion ? " ?" : ".";
+
+      // Extra info text (TR)
+      let extraParts = [];
+      if (state.isNegative) extraParts.push("Negative");
+      else extraParts.push("Positive");
+
+      extraParts.push(state.isPassive ? "Passive" : "Active");
+      if (state.modal) extraParts.push("Modal: " + state.modal);
+      if (state.isQuestion) extraParts.push("Question");
+      if (wh) extraParts.push("WH: " + wh);
+
+      sentenceExtraEl.innerText = extraParts.join(" • ");
+
+      // Buttons state
+      if (state.isNegative) {
+        negBtn.classList.add("negative");
+        negBtn.textContent = "Negative";
+      } else {
+        negBtn.classList.remove("negative");
+        negBtn.textContent = "Positive";
+      }
+
+      if (state.isQuestion) {
+        qBtn.classList.add("active");
+        qBtn.textContent = "Question";
+      } else {
+        qBtn.classList.remove("active");
+        qBtn.textContent = "Statement";
+      }
+
+      if (state.isPassive) {
+        passiveBtn.classList.add("active");
+        passiveBtn.textContent = "Passive";
+      } else {
+        passiveBtn.classList.remove("active");
+        passiveBtn.textContent = "Active";
+      }
+
+      modalLabel.innerText = state.modal || "None";
+      whLabel.innerText = state.whWord || "(none)";
+      timeLabel.innerText = state.timeAdv || "(none)";
+      placeLabel.innerText = state.placeAdv || "(none)";
+
+      updateInfoPanel();
+    }
+
+    function updateInfoPanel() {
+      const info = tenseInfo[state.tense];
+      if (!info) return;
+      tenseLabelEl.textContent = info.label;
+      patternEl.textContent = info.pattern;
+      tenseDescEl.textContent = info.desc;
+
+      examplesEl.innerHTML = "";
+      info.examples.forEach(ex => {
+        const li = document.createElement("li");
+        li.textContent = ex;
+        examplesEl.appendChild(li);
+      });
+    }
+
+    // --- EVENTS ---
+
+    document.addEventListener("click", (e) => {
+      const target = e.target;
+
+      if (!target.classList.contains("word") &&
+          !target.classList.contains("word-option")) {
+        closeMenus();
+      }
+
+      if (!target.classList.contains("word")) return;
+
+      const type = target.dataset.type;
+
+      if (type === "subject") {
+        showMenu(target, subjects, (val) => {
+          state.subject = val;
+          updateSentence();
+        });
+      }
+
+      if (type === "verb") {
+        showMenu(target, verbs, (val) => {
+          state.verb = val;
+          updateSentence();
+        });
+      }
+
+      if (type === "object") {
+        showMenu(target, objects, (val) => {
+          state.object = val;
+          updateSentence();
+        });
+      }
+
+      if (type === "modal" || type === "modal-control") {
+        showMenu(target, modals, (val) => {
+          state.modal = (val === "(none)") ? null : val;
+          updateSentence();
+        });
+      }
+
+      if (type === "wh" || type === "wh-control") {
+        showMenu(target, whWords, (val) => {
+          state.whWord = (val === "(none)") ? null : val;
+          updateSentence();
+        });
+      }
+
+      if (type === "time" || type === "time-control") {
+        showMenu(target, adverbsTime, (val) => {
+          state.timeAdv = (val === "(none)") ? null : val;
+          updateSentence();
+        });
+      }
+
+      if (type === "place" || type === "place-control") {
+        showMenu(target, adverbsPlace, (val) => {
+          state.placeAdv = (val === "(none)") ? null : val;
+          updateSentence();
+        });
+      }
+    });
+
+    // Tense buttons
+    document.querySelectorAll(".tense-buttons button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tense-buttons button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.tense = btn.dataset.tense;
+        updateSentence();
+      });
+    });
+
+    // Neg / Q / Passive toggles
+    negBtn.addEventListener("click", () => {
+      state.isNegative = !state.isNegative;
+      updateSentence();
+    });
+
+    qBtn.addEventListener("click", () => {
+      state.isQuestion = !state.isQuestion;
+      updateSentence();
+    });
+
+    passiveBtn.addEventListener("click", () => {
+      state.isPassive = !state.isPassive;
+      updateSentence();
+    });
+
+    // Controls openers
+    modalControl.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showMenu(modalControl, modals, (val) => {
+        state.modal = (val === "(none)") ? null : val;
+        updateSentence();
+      });
+    });
+
+    whControl.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showMenu(whControl, whWords, (val) => {
+        state.whWord = (val === "(none)") ? null : val;
+        updateSentence();
+      });
+    });
+
+    timeControl.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showMenu(timeControl, adverbsTime, (val) => {
+        state.timeAdv = (val === "(none)") ? null : val;
+        updateSentence();
+      });
+    });
+
+    placeControl.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showMenu(placeControl, adverbsPlace, (val) => {
+        state.placeAdv = (val === "(none)") ? null : val;
+        updateSentence();
+      });
+    });
+
+    // Initial
+    updateSentence();
+  </script>
+  <script>
+// Default lists
+let wordBank = {
+  subjects: ["I", "You", "He", "She", "It", "We", "They"],
+  verbs: ["eat", "go", "see", "play", "watch"],
+  objects: ["apples", "pizza", "a book", "music"],
+  time: ["every day", "now", "yesterday", "tomorrow"],
+  place: ["at home", "at school", "in the park"]
+};
+
+// Load from localStorage
+function loadWordBank() {
+  const saved = localStorage.getItem("wordBank");
+  if (saved) {
+    wordBank = JSON.parse(saved);
+  }
+}
+
+function saveWordBank() {
+  localStorage.setItem("wordBank", JSON.stringify(wordBank));
+}
+
+// Render list in panel
+function renderCategoryList() {
+  const cat = document.getElementById("wmCategory").value;
+  const list = document.getElementById("wmList");
+  list.innerHTML = "";
+
+  wordBank[cat].forEach((word, index) => {
+    const item = document.createElement("div");
+    item.className = "wm-item";
+
+    item.innerHTML = `
+      <span>${word}</span>
+      <button data-index="${index}">✖</button>
+    `;
+
+    item.querySelector("button").onclick = () => {
+      wordBank[cat].splice(index, 1);
+      saveWordBank();
+      renderCategoryList();
+      refreshMenus();
+    };
+
+    list.appendChild(item);
+  });
+}
+
+// Refresh global menus (subjects, verbs, etc.)
+function refreshMenus() {
+  subjects = [...wordBank.subjects];
+  verbs = [...wordBank.verbs];
+  objects = [...wordBank.objects];
+  adverbsTime = [...wordBank.time];
+  adverbsPlace = [...wordBank.place];
+}
+
+loadWordBank();
+refreshMenus();
+renderCategoryList();
+
+// Event Listeners
+document.getElementById("wmCategory").onchange = renderCategoryList;
+
+document.getElementById("wmAddBtn").onclick = () => {
+  const cat = document.getElementById("wmCategory").value;
+  const val = document.getElementById("wmInput").value.trim();
+  if (!val) return;
+
+  wordBank[cat].push(val);
+  saveWordBank();
+  refreshMenus();
+  renderCategoryList();
+  document.getElementById("wmInput").value = "";
+};
+
+document.getElementById("wmAddListBtn").onclick = () => {
+  const cat = document.getElementById("wmCategory").value;
+  const text = document.getElementById("wmTextarea").value.trim();
+
+  if (!text) return;
+
+  const lines = text.split("\n").map(a => a.trim()).filter(a => a !== "");
+
+  wordBank[cat].push(...lines);
+  saveWordBank();
+  refreshMenus();
+  renderCategoryList();
+
+  document.getElementById("wmTextarea").value = "";
+};
+
+document.getElementById("wmResetBtn").onclick = () => {
+  const cat = document.getElementById("wmCategory").value;
+  wordBank[cat] = [];
+  saveWordBank();
+  refreshMenus();
+  renderCategoryList();
+};
+</script>
+
+</body>
+</html>

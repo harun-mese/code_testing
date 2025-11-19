@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flex</title>
+    <style>
+.flex {
+  display: flex;
+  flex-direction: row;          /* YATAY ZORUNLU */
+  align-items: stretch;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+  gap: 10px;
+}
+
+.left,
+.right {
+  flex: 1;                      /* yanlar genişler */
+  background: #dfe6e9;
+  border-radius: 10px;
+}
+
+.center {
+  flex: 0 1 640px;              /* max 800px genişler */
+  max-width: 640px;
+  width: 100%;
+  background: #ffeaa7;
+}
+
+    </style>
+</head>
+<body>
+<div class="flex">
+  <div class="left">Sol Lorem, ipsum dolor sit amet consectetur adipisicing elit. Et veritatis, harum facilis quod ad tenetur debitis rerum velit porro dolorum.</div>
+  <div class="center">Orta</div>
+  <div class="right">SağLorem, ipsum dolor sit amet consectetur adipisicing elit. Et veritatis, harum facilis quod ad tenetur debitis rerum velit porro dolorum</div>
+</div>
+
+
+</body>
+</html>

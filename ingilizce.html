@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İngilizce</title>
+    <style>
+        body {
+  font-family: Arial, sans-serif;
+  padding: 40px;
+}
+
+.word {
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 22px;
+}
+
+.word:hover {
+  background: #eee;
+}
+
+.word-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 6px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.word-option {
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.word-option:hover {
+  background: #f0f0f0;
+}
+
+.sentence {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.tense-control button {
+  padding: 8px 16px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+    </style>
+</head>
+<body>
+
+    <div id="app">
+  <div class="sentence">
+    <span class="word subject" data-type="subject">I</span>
+    <span class="word verb" data-type="verb">eat</span>
+    <span class="word object" data-type="object">apples</span>
+  </div>
+
+  <div class="tense-control">
+    <button data-tense="present">Present</button>
+    <button data-tense="past">Past</button>
+    <button data-tense="future">Future</button>
+  </div>
+</div>
+
+   <script>
+const irregulars = {
+  eat: "ate",
+  go: "went",
+  see: "saw",
+  make: "made",
+  take: "took",
+  come: "came",
+};
+
+const subjects = ["I", "You", "He", "She", "It", "We", "They"];
+const objects = ["apples", "pizza", "a book", "the car", "music"];
+
+const sentence = {
+  subject: "I",
+  verb: "eat",
+  object: "apples",
+  tense: "present",
+};
+
+const subjectEl = document.querySelector(".subject");
+const verbEl = document.querySelector(".verb");
+const objectEl = document.querySelector(".object");
+
+/* ==== TIKLAMA EVENTLERİ ==== */
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("word")) {
+    const type = e.target.dataset.type;
+
+    if (type === "subject") {
+      showMenu(e.target, subjects, (val) => {
+        sentence.subject = val;
+        updateSentence();
+      });
+    }
+
+    if (type === "object") {
+      showMenu(e.target, objects, (val) => {
+        sentence.object = val;
+        updateSentence();
+      });
+    }
+
+    if (type === "verb") {
+      const verbs = ["eat", "go", "see", "make", "take", "come"];
+      showMenu(e.target, verbs, (val) => {
+        sentence.verb = val;
+        updateSentence();
+      });
+    }
+  }
+});
+
+/* ==== ZAMAN DEĞİŞİMİ ==== */
+document.querySelectorAll(".tense-control button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    sentence.tense = btn.dataset.tense;
+    updateSentence();
+  });
+});
+
+/* ==== MENÜ ==== */
+function showMenu(el, list, onSelect) {
+  const menu = document.createElement("div");
+  menu.className = "word-menu";
+
+  list.forEach(item => {
+    const op = document.createElement("div");
+    op.className = "word-option";
+    op.innerText = item;
+    op.onclick = () => {
+      onSelect(item);
+      menu.remove();
+    };
+    menu.appendChild(op);
+  });
+
+  document.body.appendChild(menu);
+
+  const rect = el.getBoundingClientRect();
+  menu.style.left = rect.left + "px";
+  menu.style.top = rect.bottom + "px";
+}
+
+/* ==== GRAMER MOTORU ==== */
+function updateSentence() {
+  subjectEl.innerText = sentence.subject;
+
+  verbEl.innerText = getVerbForm();
+  objectEl.innerText = sentence.object;
+}
+
+/* ==== FİİL DÖNÜŞTÜRÜCÜ ==== */
+function getVerbForm() {
+  const s = sentence.subject;
+  const v = sentence.verb;
+  const t = sentence.tense;
+
+  /* FUTURE */
+  if (t === "future") return "will " + v;
+
+  /* PAST */
+  if (t === "past") {
+    if (irregulars[v]) return irregulars[v];
+    return v + "ed";
+  }
+
+  /* PRESENT - 3. tekil */
+  if (t === "present") {
+    if (["He", "She", "It"].includes(s)) {
+      if (v.endsWith("y")) return v.slice(0, -1) + "ies";
+      if (v.endsWith("s")) return v + "es";
+      return v + "s";
+    }
+    return v;
+  }
+}
+</script>
+ 
+</body>
+</html>

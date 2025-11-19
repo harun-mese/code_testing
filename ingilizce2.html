@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Interactive English Sentence Builder</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 24px;
+      background: #f7f7fb;
+      color: #222;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .app-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      border: 1px solid #ececec;
+    }
+
+    .sentence-box {
+      font-size: 28px;
+      margin-bottom: 14px;
+    }
+
+    .word {
+      padding: 4px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease, box-shadow 0.15s ease;
+      display: inline-block;
+    }
+
+    .word:hover {
+      background: #eef2ff;
+      box-shadow: 0 0 0 1px #c7d2fe;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .control-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      margin-right: 4px;
+    }
+
+    .tense-buttons button {
+      border: 1px solid #d4d4d8;
+      background: #fafafa;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tense-buttons button.active {
+      background: #4f46e5;
+      color: #fff;
+      border-color: #4f46e5;
+    }
+
+    .tense-buttons button:hover {
+      background: #e4e4ff;
+    }
+
+    .toggle-btn {
+      border: 1px solid #d4d4d8;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 12px;
+      background: #fafafa;
+      transition: all 0.15s ease;
+    }
+
+    .toggle-btn.negative {
+      background: #fee2e2;
+      border-color: #f97373;
+      color: #b91c1c;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4338ca;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #4f46e5;
+      margin-right: 4px;
+    }
+
+    /* Word menu */
+    .word-menu {
+      position: absolute;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 6px;
+      z-index: 1000;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+      min-width: 120px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .word-option {
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 13px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .word-option:hover {
+      background: #f3f4ff;
+    }
+
+    /* Info panel */
+    .info-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .info-tense-label {
+      font-weight: 600;
+      color: #4f46e5;
+      margin-bottom: 2px;
+      font-size: 13px;
+    }
+
+    .info-pattern {
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 13px;
+      background: #f4f4ff;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin: 6px 0 10px;
+    }
+
+    .info-desc {
+      font-size: 13px;
+      color: #444;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .examples-list {
+      list-style: none;
+      padding-left: 14px;
+      margin: 0;
+      font-size: 13px;
+      color: #333;
+    }
+
+    .examples-list li::before {
+      content: "• ";
+      margin-left: -10px;
+      margin-right: 4px;
+      color: #4f46e5;
+    }
+
+    @media (max-width: 800px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Interactive Sentence Builder</h1>
+  <div class="subtitle">
+    Kelimelere tıkla → değiştir. Zamanı ve olumluluk/olumsuzluğu değiştir, cümle otomatik doğru gramerle güncellensin.
+  </div>
+
+  <div class="app-layout">
+    <!-- LEFT: Sentence + Controls -->
+    <div class="card">
+      <div class="sentence-box">
+        <span class="word subject" data-type="subject">I</span>
+        <span class="word modal" data-type="modal" style="display:none;"></span>
+        <span class="word aux" data-type="aux" style="display:none;"></span>
+        <span class="word verb" data-type="verb">eat</span>
+        <span class="word object" data-type="object">apples</span>
+      </div>
+
+      <div class="controls">
+        <div class="control-group">
+          <span class="control-label">Tense:</span>
+          <div class="tense-buttons">
+            <button data-tense="present_simple" class="active">Present Simple</button>
+            <button data-tense="present_continuous">Present Continuous</button>
+            <button data-tense="past_simple">Past Simple</button>
+            <button data-tense="future_will">Future (will)</button>
+            <button data-tense="present_perfect">Present Perfect</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">Polarity:</span>
+          <button id="negBtn" class="toggle-btn">Positive</button>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">Modal:</span>
+          <span class="word" data-type="modal-control" id="modalControl">
+            <span class="badge">
+              <span class="badge-dot"></span>
+              <span id="modalLabel">None</span>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Info Panel -->
+    <div class="card">
+      <div class="info-title">Grammar Info</div>
+      <div id="tenseLabel" class="info-tense-label">Present Simple</div>
+      <div id="pattern" class="info-pattern">S + V(s) + O</div>
+      <div id="tenseDesc" class="info-desc">
+        Present Simple: Genel gerçekler, rutinler ve alışkanlıklar için kullanılır.
+      </div>
+
+      <div class="info-label" style="font-size:13px;font-weight:600;margin-bottom:4px;">Examples</div>
+      <ul id="examples" class="examples-list">
+        <li>I eat apples every day.</li>
+        <li>She eats breakfast at 8 o'clock.</li>
+        <li>They play football on Sundays.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // --- DATA ---
+
+    const irregulars = {
+      eat:  { past: "ate",   pp: "eaten" },
+      go:   { past: "went",  pp: "gone" },
+      see:  { past: "saw",   pp: "seen" },
+      make: { past: "made",  pp: "made" },
+      take: { past: "took",  pp: "taken" },
+      come: { past: "came",  pp: "come" },
+      play: { past: "played", pp: "played" } // düzenli ama örnek olsun
+    };
+
+    const subjects = ["I", "You", "He", "She", "It", "We", "They"];
+    const verbs = ["eat", "go", "see", "make", "take", "come", "play", "watch", "read"];
+    const objects = ["apples", "pizza", "a book", "the car", "music", "football", "TV", "breakfast"];
+    const modals = ["(none)", "can", "should", "must", "have to"];
+
+    const modalNegatives = {
+      can: "can't",
+      should: "shouldn't",
+      must: "mustn't",
+      "have to": "don't have to"
+    };
+
+    const tenseInfo = {
+      present_simple: {
+        label: "Present Simple",
+        pattern: "S + V(s) + O",
+        desc: "Genel gerçekler, rutinler ve alışkanlıklar için kullanılır. (I work, She lives, They play...)",
+        examples: [
+          "I eat apples every day.",
+          "She plays the piano.",
+          "They watch TV in the evening."
+        ]
+      },
+      present_continuous: {
+        label: "Present Continuous",
+        pattern: "S + am/is/are + V-ing + O",
+        desc: "Şu anda olan ya da yakın zamandaki geçici eylemler için kullanılır. (I am doing, She is reading...)",
+        examples: [
+          "I am eating apples now.",
+          "He is watching TV.",
+          "They are playing football."
+        ]
+      },
+      past_simple: {
+        label: "Past Simple",
+        pattern: "S + V2 + O",
+        desc: "Geçmişte başlamış ve bitmiş eylemler için kullanılır. (I went, She saw, They played...)",
+        examples: [
+          "I ate apples yesterday.",
+          "She watched a movie.",
+          "They played football last weekend."
+        ]
+      },
+      future_will: {
+        label: "Future (will)",
+        pattern: "S + will + V1 + O",
+        desc: "Gelecekteki tahminler, ani kararlar ve niyetler için kullanılır. (I will go, She will call...)",
+        examples: [
+          "I will eat apples tomorrow.",
+          "She will watch TV tonight.",
+          "They will play football next week."
+        ]
+      },
+      present_perfect: {
+        label: "Present Perfect",
+        pattern: "S + have/has + V3 + O",
+        desc: "Geçmişte başlamış ve etkisi şu ana kadar süren eylemler için kullanılır. Zaman genelde önemli değildir. (I have seen, She has gone...)",
+        examples: [
+          "I have eaten apples today.",
+          "She has seen that movie.",
+          "They have played football many times."
+        ]
+      }
+    };
+
+    const state = {
+      subject: "I",
+      verb: "eat",
+      object: "apples",
+      tense: "present_simple",
+      isNegative: false,
+      modal: null
+    };
+
+    // --- ELEMENTS ---
+    const subjectEl = document.querySelector(".subject");
+    const verbEl = document.querySelector(".verb");
+    const objectEl = document.querySelector(".object");
+    const modalWordEl = document.querySelector(".modal");
+    const auxEl = document.querySelector(".aux");
+    const negBtn = document.getElementById("negBtn");
+    const modalControl = document.getElementById("modalControl");
+    const modalLabel = document.getElementById("modalLabel");
+
+    const tenseLabelEl = document.getElementById("tenseLabel");
+    const patternEl = document.getElementById("pattern");
+    const tenseDescEl = document.getElementById("tenseDesc");
+    const examplesEl = document.getElementById("examples");
+
+    // --- HELPERS ---
+
+    function closeMenus() {
+      document.querySelectorAll(".word-menu").forEach(m => m.remove());
+    }
+
+    function showMenu(el, list, onSelect) {
+      closeMenus();
+
+      const menu = document.createElement("div");
+      menu.className = "word-menu";
+
+      list.forEach(item => {
+        const op = document.createElement("div");
+        op.className = "word-option";
+        op.innerText = item;
+        op.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          onSelect(item);
+          closeMenus();
+        });
+        menu.appendChild(op);
+      });
+
+      document.body.appendChild(menu);
+
+      const rect = el.getBoundingClientRect();
+      menu.style.left = rect.left + "px";
+      menu.style.top = rect.bottom + "px";
+    }
+
+    function getBeForm(subject) {
+      if (subject === "I") return "am";
+      if (subject === "He" || subject === "She" || subject === "It") return "is";
+      return "are";
+    }
+
+    function getHaveForm(subject) {
+      if (subject === "He" || subject === "She" || subject === "It") return "has";
+      return "have";
+    }
+
+    function getPastForm(verb) {
+      if (irregulars[verb]) return irregulars[verb].past;
+      // basit düzenli kural
+      if (verb.endsWith("e")) return verb + "d";
+      return verb + "ed";
+    }
+
+    function getPPForm(verb) {
+      if (irregulars[verb]) return irregulars[verb].pp;
+      if (verb.endsWith("e")) return verb + "d";
+      return verb + "ed";
+    }
+
+    function getIngForm(verb) {
+      if (verb.endsWith("e") && verb.length > 2) {
+        return verb.slice(0, -1) + "ing"; // make → making
+      }
+      return verb + "ing";
+    }
+
+    function getPresentSimpleVerb(subject, verb) {
+      if (["He", "She", "It"].includes(subject)) {
+        if (verb.endsWith("y")) return verb.slice(0, -1) + "ies";
+        if (verb.endsWith("s") || verb.endsWith("sh") || verb.endsWith("ch") || verb.endsWith("x")) {
+          return verb + "es";
+        }
+        return verb + "s";
+      }
+      return verb;
+    }
+
+    // --- CORE: BUILD SENTENCE ---
+
+    function buildVerbParts() {
+      const { subject, verb, tense, isNegative, modal } = state;
+
+      // Eğer modal varsa: modal + V1
+      if (modal) {
+        let modalWord = modal;
+        if (isNegative && modalNegatives[modal]) {
+          modalWord = modalNegatives[modal];
+        }
+        return {
+          modal: modalWord,
+          aux: null,
+          mainVerb: verb
+        };
+      }
+
+      // Modal yoksa: tense mantığı
+      let aux = null;
+      let mainVerb = verb;
+
+      if (tense === "present_simple") {
+        if (isNegative) {
+          aux = (["He", "She", "It"].includes(subject)) ? "doesn't" : "don't";
+          mainVerb = verb;
+        } else {
+          aux = null;
+          mainVerb = getPresentSimpleVerb(subject, verb);
+        }
+      }
+
+      if (tense === "present_continuous") {
+        let be = getBeForm(subject);
+        if (isNegative) {
+          if (be === "am") aux = "am not";
+          else if (be === "is") aux = "isn't";
+          else aux = "aren't";
+        } else {
+          aux = be;
+        }
+        mainVerb = getIngForm(verb);
+      }
+
+      if (tense === "past_simple") {
+        if (isNegative) {
+          aux = "didn't";
+          mainVerb = verb;
+        } else {
+          aux = null;
+          mainVerb = getPastForm(verb);
+        }
+      }
+
+      if (tense === "future_will") {
+        if (isNegative) aux = "won't";
+        else aux = "will";
+        mainVerb = verb;
+      }
+
+      if (tense === "present_perfect") {
+        let have = getHaveForm(subject);
+        if (isNegative) {
+          aux = (have === "has") ? "hasn't" : "haven't";
+        } else {
+          aux = have;
+        }
+        mainVerb = getPPForm(verb);
+      }
+
+      return {
+        modal: null,
+        aux,
+        mainVerb
+      };
+    }
+
+    function updateSentence() {
+      const { subject, object, modal } = state;
+      const parts = buildVerbParts();
+
+      subjectEl.innerText = subject;
+      objectEl.innerText = object;
+
+      // modal span
+      if (parts.modal) {
+        modalWordEl.style.display = "inline-block";
+        modalWordEl.innerText = parts.modal;
+      } else {
+        modalWordEl.style.display = "none";
+        modalWordEl.innerText = "";
+      }
+
+      // aux span
+      if (parts.aux) {
+        auxEl.style.display = "inline-block";
+        auxEl.innerText = parts.aux;
+      } else {
+        auxEl.style.display = "none";
+        auxEl.innerText = "";
+      }
+
+      verbEl.innerText = parts.mainVerb;
+
+      // Modal kontrol label
+      modalLabel.innerText = modal ? modal : "None";
+
+      // Negatif buton
+      if (state.isNegative) {
+        negBtn.classList.add("negative");
+        negBtn.textContent = "Negative";
+      } else {
+        negBtn.classList.remove("negative");
+        negBtn.textContent = "Positive";
+      }
+
+      updateInfoPanel();
+    }
+
+    function updateInfoPanel() {
+      const info = tenseInfo[state.tense];
+      if (!info) return;
+
+      tenseLabelEl.textContent = info.label;
+      patternEl.textContent = info.pattern;
+      tenseDescEl.textContent = info.desc;
+
+      // örnekleri güncelle
+      examplesEl.innerHTML = "";
+      info.examples.forEach(ex => {
+        const li = document.createElement("li");
+        li.textContent = ex;
+        examplesEl.appendChild(li);
+      });
+    }
+
+    // --- EVENTS ---
+
+    // Kelime tıklama
+    document.addEventListener("click", (e) => {
+      const target = e.target;
+
+      // Menü dışına tıklayınca kapat
+      if (!target.classList.contains("word") &&
+          !target.classList.contains("word-option")) {
+        closeMenus();
+      }
+
+      if (!target.classList.contains("word")) return;
+
+      const type = target.dataset.type;
+
+      if (type === "subject") {
+        showMenu(target, subjects, (val) => {
+          state.subject = val;
+          updateSentence();
+        });
+      }
+
+      if (type === "verb") {
+        showMenu(target, verbs, (val) => {
+          state.verb = val;
+          updateSentence();
+        });
+      }
+
+      if (type === "object") {
+        showMenu(target, objects, (val) => {
+          state.object = val;
+          updateSentence();
+        });
+      }
+
+      // modal kelimesinin kendisine tıklarsa, modal seçimi aç
+      if (type === "modal" || type === "modal-control") {
+        showMenu(target, modals, (val) => {
+          state.modal = (val === "(none)") ? null : val;
+          updateSentence();
+        });
+      }
+    });
+
+    // Zaman butonları
+    document.querySelectorAll(".tense-buttons button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tense-buttons button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.tense = btn.dataset.tense;
+        updateSentence();
+      });
+    });
+
+    // Negatif toggle
+    negBtn.addEventListener("click", () => {
+      state.isNegative = !state.isNegative;
+      updateSentence();
+    });
+
+    // Modal kontrol (badge'e tık)
+    modalControl.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showMenu(modalControl, modals, (val) => {
+        state.modal = (val === "(none)") ? null : val;
+        updateSentence();
+      });
+    });
+
+    // Initial
+    updateSentence();
+  </script>
+</body>
+</html>

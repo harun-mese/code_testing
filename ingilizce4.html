@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>English Grammar Lab – Sentence Builder</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 24px;
+      background: #f7f7fb;
+      color: #222;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .app-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      border: 1px solid #ececec;
+    }
+
+    .sentence-box {
+      font-size: 26px;
+      margin-bottom: 16px;
+      min-height: 40px;
+    }
+
+    .word {
+      padding: 3px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease, box-shadow 0.15s ease;
+      display: inline-block;
+      margin-right: 2px;
+    }
+
+    .word:hover {
+      background: #eef2ff;
+      box-shadow: 0 0 0 1px #c7d2fe;
+    }
+
+    .punct {
+      margin-right: 4px;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .control-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      margin-right: 4px;
+    }
+
+    select, button {
+      font-family: inherit;
+      font-size: 12px;
+    }
+
+    select {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid #d4d4d8;
+      background: #fafafa;
+      cursor: pointer;
+    }
+
+    .pill-btn {
+      border: 1px solid #d4d4d8;
+      padding: 5px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 12px;
+      background: #fafafa;
+      transition: all 0.15s ease;
+    }
+
+    .pill-btn.active {
+      background: #4f46e5;
+      border-color: #4f46e5;
+      color: #fff;
+    }
+
+    .pill-btn.negative {
+      background: #fee2e2;
+      border-color: #f97373;
+      color: #b91c1c;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4338ca;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #4f46e5;
+      margin-right: 4px;
+    }
+
+    /* Word menu */
+    .word-menu {
+      position: absolute;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 6px;
+      z-index: 1000;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+      min-width: 120px;
+      max-height: 220px;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+
+    .word-option {
+      padding: 4px 8px;
+      cursor: pointer;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .word-option:hover {
+      background: #f3f4ff;
+    }
+
+    /* Info panel */
+    .info-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .info-tense-label {
+      font-weight: 600;
+      color: #4f46e5;
+      margin-bottom: 2px;
+      font-size: 13px;
+    }
+
+    .info-pattern {
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 13px;
+      background: #f4f4ff;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin: 6px 0 10px;
+    }
+
+    .info-desc {
+      font-size: 13px;
+      color: #444;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .examples-list {
+      list-style: none;
+      padding-left: 14px;
+      margin: 0;
+      font-size: 13px;
+      color: #333;
+    }
+
+    .examples-list li::before {
+      content: "• ";
+      margin-left: -10px;
+      margin-right: 4px;
+      color: #4f46e5;
+    }
+
+    @media (max-width: 800px) {
+      .app-layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>English Grammar Lab – Sentence Builder</h1>
+  <div class="subtitle">
+    Kelimelere tıkla → değiştir. Tense, modal, soru tipi, aktif/pasif, zaman & yer ifadeleri ile cümle otomatik doğru gramere dönüşsün.
+  </div>
+
+  <div class="app-layout">
+    <!-- LEFT: Sentence + Controls -->
+    <div class="card">
+      <div id="sentenceBox" class="sentence-box"></div>
+
+      <div class="controls">
+        <div class="control-group">
+          <span class="control-label">Tense:</span>
+          <select id="tenseSelect">
+            <optgroup label="Present">
+              <option value="present_simple">Present Simple</option>
+              <option value="present_continuous">Present Continuous</option>
+              <option value="present_perfect">Present Perfect</option>
+              <option value="present_perfect_continuous">Present Perfect Continuous</option>
+            </optgroup>
+            <optgroup label="Past">
+              <option value="past_simple">Past Simple</option>
+              <option value="past_continuous">Past Continuous</option>
+              <option value="past_perfect">Past Perfect</option>
+              <option value="past_perfect_continuous">Past Perfect Continuous</option>
+            </optgroup>
+            <optgroup label="Future">
+              <option value="future_will">Future Simple (will)</option>
+              <option value="future_going_to">Be going to</option>
+              <option value="future_continuous">Future Continuous</option>
+              <option value="future_perfect">Future Perfect</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">Polarity:</span>
+          <button id="negBtn" class="pill-btn">Positive</button>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">Modal:</span>
+          <span id="modalControl" class="badge">
+            <span class="badge-dot"></span>
+            <span id="modalLabel">None</span>
+          </span>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">Voice:</span>
+          <button class="pill-btn active" data-voice="active" id="voiceActive">Active</button>
+          <button class="pill-btn" data-voice="passive" id="voicePassive">Passive (basic)</button>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">Sentence:</span>
+          <button class="pill-btn active" data-sent="statement" id="btnStatement">Statement</button>
+          <button class="pill-btn" data-sent="yn_question" id="btnYN">Yes/No Question</button>
+          <button class="pill-btn" data-sent="wh_question" id="btnWH">WH Question</button>
+          <span id="whControl" class="badge">
+            <span class="badge-dot"></span>
+            <span id="whLabel">What</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Info Panel -->
+    <div class="card">
+      <div class="info-title">Grammar Info</div>
+      <div id="tenseLabel" class="info-tense-label">Present Simple</div>
+      <div id="pattern" class="info-pattern">S + V(s) + O (+ Time / Place)</div>
+      <div id="tenseDesc" class="info-desc">
+        Present Simple: Genel gerçekler, rutinler ve alışkanlıklar için kullanılır.
+      </div>
+
+      <div class="info-label" style="font-size:13px;font-weight:600;margin-bottom:4px;">Examples</div>
+      <ul id="examples" class="examples-list"></ul>
+    </div>
+  </div>
+
+  <script>
+    // === DATA ===
+
+    const irregulars = {
+      eat:  { past: "ate",   pp: "eaten" },
+      go:   { past: "went",  pp: "gone" },
+      see:  { past: "saw",   pp: "seen" },
+      make: { past: "made",  pp: "made" },
+      take: { past: "took",  pp: "taken" },
+      come: { past: "came",  pp: "come" },
+      play: { past: "played", pp: "played" },
+      watch:{ past: "watched", pp: "watched" },
+      read: { past: "read", pp: "read" }
+    };
+
+    const subjects = ["I", "You", "He", "She", "It", "We", "They"];
+
+    const verbs = [
+      "eat",
+      "go",
+      "see",
+      "make",
+      "take",
+      "come",
+      "play",
+      "watch",
+      "read"
+    ];
+
+    const objects = [
+      "apples",
+      "pizza",
+      "a book",
+      "the car",
+      "music",
+      "football",
+      "TV",
+      "breakfast",
+      "a letter"
+    ];
+
+    const timeAdverbs = [
+      "(none)",
+      "every day",
+      "usually",
+      "often",
+      "sometimes",
+      "now",
+      "at the moment",
+      "yesterday",
+      "last night",
+      "last week",
+      "tomorrow",
+      "next week",
+      "for two years",
+      "since 2020",
+      "already",
+      "just",
+      "yet"
+    ];
+
+    const placeAdverbs = [
+      "(none)",
+      "at home",
+      "at work",
+      "in the park",
+      "at school",
+      "in London",
+      "in my room",
+      "on the bus"
+    ];
+
+    const modals = [
+      "(none)",
+      "can",
+      "could",
+      "may",
+      "might",
+      "must",
+      "should",
+      "have to",
+      "need to",
+      "will",
+      "would",
+      "shall"
+    ];
+
+    const modalNegatives = {
+      can: "can't",
+      could: "couldn't",
+      may: "may not",
+      might: "might not",
+      must: "mustn't",
+      should: "shouldn't",
+      "have to": "don't have to",
+      "need to": "don't need to",
+      will: "won't",
+      would: "wouldn't",
+      shall: "shan't"
+    };
+
+    const whWords = ["What", "Where", "When", "Why", "How", "Who", "Which"];
+
+    const tenseInfo = {
+      present_simple: {
+        label: "Present Simple",
+        pattern: "S + V(s) + O (+ Time / Place)",
+        desc: "Genel gerçekler, rutinler ve alışkanlıklar için kullanılır.",
+        examples: [
+          "I eat apples every day.",
+          "She plays the piano.",
+          "They watch TV in the evening."
+        ]
+      },
+      present_continuous: {
+        label: "Present Continuous",
+        pattern: "S + am/is/are + V-ing + O",
+        desc: "Şu anda olan veya geçici eylemler için kullanılır.",
+        examples: [
+          "I am eating apples now.",
+          "He is watching TV.",
+          "They are playing football."
+        ]
+      },
+      present_perfect: {
+        label: "Present Perfect",
+        pattern: "S + have/has + V3 + O",
+        desc: "Geçmişte başlamış ve etkisi şu ana kadar süren eylemler için kullanılır.",
+        examples: [
+          "I have eaten apples today.",
+          "She has seen that movie.",
+          "They have played football many times."
+        ]
+      },
+      present_perfect_continuous: {
+        label: "Present Perfect Continuous",
+        pattern: "S + have/has been + V-ing + O",
+        desc: "Geçmişten beri devam eden ve etkisi hâlâ süren eylemler.",
+        examples: [
+          "I have been reading a book for two hours.",
+          "She has been working all day.",
+          "They have been playing since morning."
+        ]
+      },
+      past_simple: {
+        label: "Past Simple",
+        pattern: "S + V2 + O",
+        desc: "Geçmişte başlamış ve bitmiş eylemler için kullanılır.",
+        examples: [
+          "I ate apples yesterday.",
+          "She watched a movie.",
+          "They played football last weekend."
+        ]
+      },
+      past_continuous: {
+        label: "Past Continuous",
+        pattern: "S + was/were + V-ing + O",
+        desc: "Geçmişte belirli bir anda devam eden eylemler.",
+        examples: [
+          "I was eating when you called.",
+          "She was watching TV at 8.",
+          "They were playing football yesterday at 3."
+        ]
+      },
+      past_perfect: {
+        label: "Past Perfect",
+        pattern: "S + had + V3 + O",
+        desc: "Geçmişteki bir olaydan daha önce gerçekleşmiş eylemler.",
+        examples: [
+          "I had eaten before you arrived.",
+          "She had seen the film before.",
+          "They had played football before school."
+        ]
+      },
+      past_perfect_continuous: {
+        label: "Past Perfect Continuous",
+        pattern: "S + had been + V-ing + O",
+        desc: "Geçmişte belli bir ana kadar devam eden eylemler.",
+        examples: [
+          "I had been reading for two hours.",
+          "She had been working all day.",
+          "They had been playing for an hour."
+        ]
+      },
+      future_will: {
+        label: "Future Simple (will)",
+        pattern: "S + will + V1 + O",
+        desc: "Tahminler, ani kararlar ve gelecek planları için kullanılır.",
+        examples: [
+          "I will eat apples tomorrow.",
+          "She will watch TV tonight.",
+          "They will play football next week."
+        ]
+      },
+      future_going_to: {
+        label: "Be going to",
+        pattern: "S + am/is/are going to + V1 + O",
+        desc: "Planlanmış gelecek eylemler ve kanıta dayalı tahminler için.",
+        examples: [
+          "I am going to eat soon.",
+          "She is going to watch a movie.",
+          "They are going to play football."
+        ]
+      },
+      future_continuous: {
+        label: "Future Continuous",
+        pattern: "S + will be + V-ing + O",
+        desc: "Gelecekte belli bir anda devam ediyor olacak eylemler.",
+        examples: [
+          "I will be eating at 8.",
+          "She will be watching TV tonight.",
+          "They will be playing football tomorrow afternoon."
+        ]
+      },
+      future_perfect: {
+        label: "Future Perfect",
+        pattern: "S + will have + V3 + O",
+        desc: "Gelecekte belli bir zamana kadar tamamlanmış olacak eylemler.",
+        examples: [
+          "I will have eaten by 9.",
+          "She will have watched the movie by then.",
+          "They will have played three matches by Sunday."
+        ]
+      }
+    };
+
+    // === STATE ===
+
+    const state = {
+      subject: "I",
+      verb: "eat",
+      object: "apples",
+      timeAdv: "every day",
+      placeAdv: "at home",
+      tense: "present_simple",
+      isNegative: false,
+      modal: null,
+      voice: "active", // "active" | "passive"
+      sentenceType: "statement", // "statement" | "yn_question" | "wh_question"
+      whWord: "What"
+    };
+
+    // === ELEMENTS ===
+
+    const sentenceBox = document.getElementById("sentenceBox");
+    const tenseSelect = document.getElementById("tenseSelect");
+    const negBtn = document.getElementById("negBtn");
+    const modalControl = document.getElementById("modalControl");
+    const modalLabel = document.getElementById("modalLabel");
+    const voiceActiveBtn = document.getElementById("voiceActive");
+    const voicePassiveBtn = document.getElementById("voicePassive");
+    const btnStatement = document.getElementById("btnStatement");
+    const btnYN = document.getElementById("btnYN");
+    const btnWH = document.getElementById("btnWH");
+    const whControl = document.getElementById("whControl");
+    const whLabel = document.getElementById("whLabel");
+
+    const tenseLabelEl = document.getElementById("tenseLabel");
+    const patternEl = document.getElementById("pattern");
+    const tenseDescEl = document.getElementById("tenseDesc");
+    const examplesEl = document.getElementById("examples");
+
+    // === HELPERS ===
+
+    function closeMenus() {
+      document.querySelectorAll(".word-menu").forEach(m => m.remove());
+    }
+
+    function showMenu(el, list, onSelect) {
+      closeMenus();
+      const menu = document.createElement("div");
+      menu.className = "word-menu";
+      list.forEach(item => {
+        const op = document.createElement("div");
+        op.className = "word-option";
+        op.innerText = item;
+        op.addEventListener("click", ev => {
+          ev.stopPropagation();
+          onSelect(item);
+          closeMenus();
+        });
+        menu.appendChild(op);
+      });
+      document.body.appendChild(menu);
+      const rect = el.getBoundingClientRect();
+      menu.style.left = rect.left + "px";
+      menu.style.top = rect.bottom + "px";
+    }
+
+    function getBeForm(subject) {
+      if (subject === "I") return "am";
+      if (subject === "He" || subject === "She" || subject === "It") return "is";
+      return "are";
+    }
+
+    function getBePastForm(subject) {
+      if (subject === "I" || subject === "He" || subject === "She" || subject === "It") return "was";
+      return "were";
+    }
+
+    function getHaveForm(subject) {
+      if (subject === "He" || subject === "She" || subject === "It") return "has";
+      return "have";
+    }
+
+    function getPastForm(verb) {
+      if (irregulars[verb]) return irregulars[verb].past;
+      if (verb.endsWith("e")) return verb + "d";
+      return verb + "ed";
+    }
+
+    function getPPForm(verb) {
+      if (irregulars[verb]) return irregulars[verb].pp;
+      if (verb.endsWith("e")) return verb + "d";
+      return verb + "ed";
+    }
+
+    function getIngForm(verb) {
+      if (verb.endsWith("e") && verb.length > 2) return verb.slice(0, -1) + "ing";
+      return verb + "ing";
+    }
+
+    function getPresentSimpleVerb(subject, verb) {
+      if (["He", "She", "It"].includes(subject)) {
+        if (verb.endsWith("y")) return verb.slice(0, -1) + "ies";
+        if (/(s|sh|ch|x|z)$/.test(verb)) return verb + "es";
+        return verb + "s";
+      }
+      return verb;
+    }
+
+    // === CORE: BUILD STRUCTURE ===
+
+    function buildVerbStructure() {
+      const { subject, verb, tense, isNegative, modal, voice } = state;
+
+      // MODAL DOMİNE EDER: modal seçiliyse tense sadece zaman ifadesi gibi davranır
+      if (modal) {
+        let modalWord = modal;
+        if (isNegative && modalNegatives[modal]) {
+          modalWord = modalNegatives[modal];
+        } else if (isNegative && !modalNegatives[modal]) {
+          modalWord += " not";
+        }
+
+        if (voice === "active") {
+          return {
+            aux: [modalWord],
+            mainVerb: verb,
+            isPassive: false
+          };
+        } else {
+          // basic passive: modal + be + V3
+          return {
+            aux: [modalWord, "be"],
+            mainVerb: getPPForm(verb),
+            isPassive: true
+          };
+        }
+      }
+
+      // Tense + Voice
+      let aux = [];
+      let mainVerb = verb;
+      let isPassive = (voice === "passive");
+
+      switch (tense) {
+        case "present_simple": {
+          if (voice === "active") {
+            if (isNegative) {
+              const doWord = ["He","She","It"].includes(subject) ? "doesn't" : "don't";
+              aux.push(doWord);
+              mainVerb = verb;
+            } else {
+              mainVerb = getPresentSimpleVerb(subject, verb);
+            }
+          } else {
+            // passive
+            let be = getBeForm(subject);
+            if (isNegative) {
+              if (be === "am") be = "am not";
+              else if (be === "is") be = "isn't";
+              else be = "aren't";
+            }
+            aux.push(be);
+            mainVerb = getPPForm(verb);
+            isPassive = true;
+          }
+          break;
+        }
+
+        case "present_continuous": {
+          let be = getBeForm(subject);
+          if (voice === "active") {
+            if (isNegative) {
+              if (be === "am") be = "am not";
+              else if (be === "is") be = "isn't";
+              else be = "aren't";
+            }
+            aux.push(be);
+            mainVerb = getIngForm(verb);
+          } else {
+            // passive: am/is/are being + V3
+            if (isNegative) {
+              if (be === "am") be = "am not";
+              else if (be === "is") be = "isn't";
+              else be = "aren't";
+            }
+            aux.push(be, "being");
+            mainVerb = getPPForm(verb);
+            isPassive = true;
+          }
+          break;
+        }
+
+        case "present_perfect": {
+          let have = getHaveForm(subject);
+          if (isNegative) {
+            have = (have === "has") ? "hasn't" : "haven't";
+          }
+          aux.push(have);
+          if (voice === "active") {
+            mainVerb = getPPForm(verb);
+          } else {
+            aux.push("been");
+            mainVerb = getPPForm(verb);
+            isPassive = true;
+          }
+          break;
+        }
+
+        case "present_perfect_continuous": {
+          let have = getHaveForm(subject);
+          if (isNegative) {
+            have = (have === "has") ? "hasn't" : "haven't";
+          }
+          aux.push(have, "been");
+          mainVerb = getIngForm(verb);
+          // passive çok advanced, burada active kalalım
+          break;
+        }
+
+        case "past_simple": {
+          if (voice === "active") {
+            if (isNegative) {
+              aux.push("didn't");
+              mainVerb = verb;
+            } else {
+              mainVerb = getPastForm(verb);
+            }
+          } else {
+            let be = getBePastForm(subject);
+            if (isNegative) {
+              be = (be === "was") ? "wasn't" : "weren't";
+            }
+            aux.push(be);
+            mainVerb = getPPForm(verb);
+            isPassive = true;
+          }
+          break;
+        }
+
+        case "past_continuous": {
+          let be = getBePastForm(subject);
+          if (isNegative) {
+            be = (be === "was") ? "wasn't" : "weren't";
+          }
+          aux.push(be);
+          mainVerb = getIngForm(verb);
+          // passive advanced → atlamıyoruz ama aktif bırakalım
+          break;
+        }
+
+        case "past_perfect": {
+          let have = "had";
+          if (isNegative) have = "hadn't";
+          aux.push(have);
+          if (voice === "active") {
+            mainVerb = getPPForm(verb);
+          } else {
+            aux.push("been");
+            mainVerb = getPPForm(verb);
+            isPassive = true;
+          }
+          break;
+        }
+
+        case "past_perfect_continuous": {
+          let have = "had";
+          if (isNegative) have = "hadn't";
+          aux.push(have, "been");
+          mainVerb = getIngForm(verb);
+          break;
+        }
+
+        case "future_will": {
+          let will = "will";
+          if (isNegative) will = "won't";
+          aux.push(will);
+          if (voice === "active") {
+            mainVerb = verb;
+          } else {
+            aux.push("be");
+            mainVerb = getPPForm(verb);
+            isPassive = true;
+          }
+          break;
+        }
+
+        case "future_going_to": {
+          let be = getBeForm(subject) + " going to";
+          if (isNegative) {
+            if (be.startsWith("am")) be = "am not going to";
+            else if (be.startsWith("is")) be = "isn't going to";
+            else be = "aren't going to";
+          }
+          aux.push(be);
+          mainVerb = verb;
+          // passive advanced → şimdilik active
+          break;
+        }
+
+        case "future_continuous": {
+          let will = isNegative ? "won't" : "will";
+          aux.push(will, "be");
+          mainVerb = getIngForm(verb);
+          break;
+        }
+
+        case "future_perfect": {
+          let will = isNegative ? "won't" : "will";
+          aux.push(will, "have");
+          mainVerb = getPPForm(verb);
+          // passive advanced: will have been + V3 → isteğe göre eklenebilir
+          if (voice === "passive") {
+            aux.push("been");
+            mainVerb = getPPForm(verb);
+            isPassive = true;
+          }
+          break;
+        }
+      }
+
+      return { aux, mainVerb, isPassive };
+    }
+
+    // Build tokens: [{type, text, clickable}]
+    function buildSentenceTokens() {
+      const tokens = [];
+      const { subject, object, timeAdv, placeAdv, sentenceType, whWord } = state;
+
+      const { aux, mainVerb, isPassive } = buildVerbStructure();
+
+      const subjTok = { type: "subject", text: subject, clickable: true };
+      const verbTok = { type: "verb", text: mainVerb, clickable: true };
+      const objTok = object !== "(none)" ? { type: "object", text: object, clickable: true } : null;
+      const timeTok = timeAdv && timeAdv !== "(none)" ? { type: "time", text: timeAdv, clickable: true } : null;
+      const placeTok = placeAdv && placeAdv !== "(none)" ? { type: "place", text: placeAdv, clickable: true } : null;
+
+      const auxToks = aux.map(a => ({ type: "aux", text: a, clickable: false }));
+
+      // Sentence patterns
+      if (sentenceType === "statement") {
+        // WH yok
+        tokens.push(subjTok);
+        auxToks.forEach(t => tokens.push(t));
+        tokens.push(verbTok);
+        if (objTok) tokens.push(objTok);
+        if (timeTok) tokens.push(timeTok);
+        if (placeTok) tokens.push(placeTok);
+      }
+
+      if (sentenceType === "yn_question") {
+        // Modal veya Aux varsa öne gelir, yoksa do/does/did desteği
+        if (auxToks.length > 0) {
+          tokens.push(auxToks[0]);
+          tokens.push(subjTok);
+          auxToks.slice(1).forEach(t => tokens.push(t));
+          tokens.push(verbTok);
+        } else {
+          // do-support (sadece basic için)
+          let helper = "do";
+          if (state.tense === "past_simple") helper = "did";
+          else if (["He","She","It"].includes(subject)) helper = "does";
+          tokens.push({ type: "aux", text: helper, clickable: false });
+          tokens.push(subjTok);
+          tokens.push({ type: "verb", text: state.verb, clickable: true });
+        }
+        if (objTok) tokens.push(objTok);
+        if (timeTok) tokens.push(timeTok);
+        if (placeTok) tokens.push(placeTok);
+      }
+
+      if (sentenceType === "wh_question") {
+        tokens.push({ type: "wh", text: whWord, clickable: true });
+
+        if (auxToks.length > 0) {
+          tokens.push(auxToks[0]);
+          tokens.push(subjTok);
+          auxToks.slice(1).forEach(t => tokens.push(t));
+          tokens.push(verbTok);
+        } else {
+          let helper = "do";
+          if (state.tense === "past_simple") helper = "did";
+          else if (["He","She","It"].includes(subject)) helper = "does";
+          tokens.push({ type: "aux", text: helper, clickable: false });
+          tokens.push(subjTok);
+          tokens.push({ type: "verb", text: state.verb, clickable: true });
+        }
+        if (objTok) tokens.push(objTok);
+        if (timeTok) tokens.push(timeTok);
+        if (placeTok) tokens.push(placeTok);
+      }
+
+      return tokens;
+    }
+
+    function renderSentence() {
+      sentenceBox.innerHTML = "";
+      const tokens = buildSentenceTokens();
+
+      tokens.forEach(tok => {
+        const span = document.createElement("span");
+        span.className = "word";
+        span.textContent = tok.text;
+        span.dataset.type = tok.type;
+        if (!tok.clickable) {
+          // yine de hover dursun ama istersen kaldırabilirsin
+        }
+        sentenceBox.appendChild(span);
+        sentenceBox.appendChild(document.createTextNode(" "));
+      });
+
+      // soru işareti
+      if (state.sentenceType !== "statement") {
+        const q = document.createElement("span");
+        q.className = "punct";
+        q.textContent = "?";
+        sentenceBox.appendChild(q);
+      } else {
+        const dot = document.createElement("span");
+        dot.className = "punct";
+        dot.textContent = ".";
+        sentenceBox.appendChild(dot);
+      }
+
+      // UI durumları
+      modalLabel.textContent = state.modal || "None";
+      whLabel.textContent = state.whWord;
+
+      if (state.isNegative) {
+        negBtn.classList.add("negative");
+        negBtn.textContent = "Negative";
+      } else {
+        negBtn.classList.remove("negative");
+        negBtn.textContent = "Positive";
+      }
+
+      if (state.voice === "active") {
+        voiceActiveBtn.classList.add("active");
+        voicePassiveBtn.classList.remove("active");
+      } else {
+        voicePassiveBtn.classList.remove("active");
+        voiceActiveBtn.classList.remove("active");
+        voicePassiveBtn.classList.add("active");
+      }
+
+      btnStatement.classList.toggle("active", state.sentenceType === "statement");
+      btnYN.classList.toggle("active", state.sentenceType === "yn_question");
+      btnWH.classList.toggle("active", state.sentenceType === "wh_question");
+
+      updateInfoPanel();
+    }
+
+    function updateInfoPanel() {
+      const info = tenseInfo[state.tense];
+      if (!info) return;
+      tenseLabelEl.textContent = info.label;
+      patternEl.textContent = info.pattern;
+      tenseDescEl.textContent = info.desc;
+
+      examplesEl.innerHTML = "";
+      info.examples.forEach(ex => {
+        const li = document.createElement("li");
+        li.textContent = ex;
+        examplesEl.appendChild(li);
+      });
+    }
+
+    // === EVENTS ===
+
+    // Global click (kelime ve boş alan)
+    document.addEventListener("click", e => {
+      const target = e.target;
+
+      if (!target.classList.contains("word") &&
+          !target.classList.contains("word-option") &&
+          !target.classList.contains("badge")) {
+        closeMenus();
+      }
+
+      if (!target.classList.contains("word")) return;
+
+      const type = target.dataset.type;
+
+      if (type === "subject") {
+        showMenu(target, subjects, val => {
+          state.subject = val;
+          renderSentence();
+        });
+      }
+
+      if (type === "verb") {
+        showMenu(target, verbs, val => {
+          state.verb = val;
+          renderSentence();
+        });
+      }
+
+      if (type === "object") {
+        showMenu(target, ["(none)", ...objects], val => {
+          state.object = val === "(none)" ? "(none)" : val;
+          renderSentence();
+        });
+      }
+
+      if (type === "time") {
+        showMenu(target, timeAdverbs, val => {
+          state.timeAdv = val;
+          renderSentence();
+        });
+      }
+
+      if (type === "place") {
+        showMenu(target, placeAdverbs, val => {
+          state.placeAdv = val;
+          renderSentence();
+        });
+      }
+
+      if (type === "wh") {
+        showMenu(target, whWords, val => {
+          state.whWord = val;
+          renderSentence();
+        });
+      }
+    });
+
+    // Tense select
+    tenseSelect.addEventListener("change", () => {
+      state.tense = tenseSelect.value;
+      renderSentence();
+    });
+
+    // Negatif toggle
+    negBtn.addEventListener("click", () => {
+      state.isNegative = !state.isNegative;
+      renderSentence();
+    });
+
+    // Modal badge
+    modalControl.addEventListener("click", e => {
+      e.stopPropagation();
+      showMenu(modalControl, modals, val => {
+        state.modal = val === "(none)" ? null : val;
+        renderSentence();
+      });
+    });
+
+    // Voice buttons
+    voiceActiveBtn.addEventListener("click", () => {
+      state.voice = "active";
+      renderSentence();
+    });
+
+    voicePassiveBtn.addEventListener("click", () => {
+      state.voice = "passive";
+      renderSentence();
+    });
+
+    // Sentence type buttons
+    btnStatement.addEventListener("click", () => {
+      state.sentenceType = "statement";
+      renderSentence();
+    });
+
+    btnYN.addEventListener("click", () => {
+      state.sentenceType = "yn_question";
+      renderSentence();
+    });
+
+    btnWH.addEventListener("click", () => {
+      state.sentenceType = "wh_question";
+      renderSentence();
+    });
+
+    // WH badge
+    whControl.addEventListener("click", e => {
+      e.stopPropagation();
+      showMenu(whControl, whWords, val => {
+        state.whWord = val;
+        renderSentence();
+      });
+    });
+
+    // Init
+    renderSentence();
+  </script>
+</body>
+</html>
