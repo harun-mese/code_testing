@@ -2,18 +2,14 @@
    EWC EDITÖR – Between Container + Block Menü + Balloon Editor
    - betweenContainer: admin.html içinde
    - blockMenu: admin.html içinde
-   - Balloon editor: iframe içindeki selection + tıklama için
+   - Balloon editor: iframe içindeki selection için
 ============================================================================ */
 
-/* Global balloon state */
-let EWC_Balloon = null;
-let EWC_SelectedBlock = null;
-
 document.addEventListener("DOMContentLoaded", () => {
-    const iframe    = document.querySelector("iframe");
-    const between   = document.getElementById("betweenContainer");
-    const plusBtn   = between ? between.querySelector(".plus") : null;
-    const blockMenu = document.getElementById("blockMenu");
+    const iframe      = document.querySelector("iframe");
+    const between     = document.getElementById("betweenContainer");
+    const plusBtn     = between.querySelector(".plus");
+    const blockMenu   = document.getElementById("blockMenu");
 
     if (!iframe || !between || !plusBtn || !blockMenu) {
         console.warn("EWC Editor: Gerekli elemanlar eksik.");
@@ -28,31 +24,24 @@ document.addEventListener("DOMContentLoaded", () => {
 /* ============================================================================
    INIT
 ============================================================================ */
+function setupIframeClicks(iframe) {
+    const doc = iframe.contentDocument;
 
-function initEWCEditor(iframe, between, plusBtn, blockMenu) {
-    const doc     = iframe.contentDocument;
-    const article = doc.querySelector("article");
+    doc.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-    if (!article) {
-        console.warn("EWC Editor: <article> bulunamadı.");
-        return;
-    }
+        const el = e.target;
 
-    article.setAttribute("contenteditable", "true");
-
-    initBetweenHover(iframe, article, between);
-    initBlockMenu(iframe, between, plusBtn, blockMenu);
-    initBalloonEditor(iframe, article);
+        // EWC içinde işlem yapmak için callback
+        handleIframeClick(el);
+    });
 }
-
-/* ============================================================================
-   CLICK LOGIC: hangi bloğa tıklandığını bulmak
-============================================================================ */
-
 function handleIframeClick(el) {
-    const tag     = el.tagName.toLowerCase();
+
+    const tag = el.tagName.toLowerCase();
     const classes = [...el.classList];
-    const dataset = { ...el.dataset };
+    const dataset = {...el.dataset};
 
     console.log("Tıklanan eleman:", {
         tag,
@@ -60,15 +49,51 @@ function handleIframeClick(el) {
         dataset,
         element: el
     });
+
+    // Şimdi sana örnek nasıl davranacağını göstereyim:
+
+    if (tag === "p") {
+        console.log("PARAGRAF seçildi");
+        // Burada balloon açabilir, stil paneli gösterebilir, vs
+    }
+
+    else if (tag === "h1" || tag === "h2") {
+        console.log("BAŞLIK seçildi");
+    }
+
+    else if (tag === "img") {
+        console.log("GÖRSEL seçildi:", el.src);
+    }
+
+    else if (tag === "blockquote") {
+        console.log("ALINTI seçildi");
+    }
+
+    else if (tag === "ul" || tag === "ol") {
+        console.log("LİSTE seçildi");
+    }
+
+    else if (tag === "li") {
+        console.log("LİSTE ÖĞESİ seçildi");
+    }
+
+    else if (tag === "figure") {
+        console.log("FIGURE bloğu (slide, image, video olabilir)");
+    }
+
+    else {
+        console.log("GENEL TAG:", tag);
+    }
 }
 
-function getBlockElement(el, article) {
+function getBlockElement(el) {
     let current = el;
 
-    while (current && current !== article) {
+    while (current && current.tagName !== "ARTICLE") {
         if (
-            ["p","h1","h2","h3","blockquote","ul","ol","li","figure","img","video"]
-            .includes(current.tagName.toLowerCase())
+            ["p","h1","h2","h3","blockquote","ul","ol","li","figure","img","video"].includes(
+                current.tagName.toLowerCase()
+            )
         ) {
             return current;
         }
@@ -78,18 +103,35 @@ function getBlockElement(el, article) {
     return null;
 }
 
-/* ============================================================================
-   BETWEEN HOVER SYSTEM
-============================================================================ */
+function initEWCEditor(iframe, between, plusBtn, blockMenu) {
+    const doc     = iframe.contentDocument;
+    const win     = iframe.contentWindow;
+    const article = doc.querySelector("article");
 
-function initBetweenHover(iframe, article, between) {
-    const doc = iframe.contentDocument;
+    if (!article) {
+        console.warn("EWC Editor: <article> bulunamadı.");
+        return;
+    }
+
+    article.setAttribute("contenteditable", "true");
+
     let hoverTimer = null;
+    let menuOpen   = false;
+    //setupIframeClicks(iframe);
 
+    doc.addEventListener("click", (e) => {
+        const block = getBlockElement(e.target);
+        if (block) handleIframeClick(block);
+    });
+
+
+
+
+    /* ------------------------------------------------------------------------
+       1) BETWEEN HOVER – her mousemove’de article içini tekrar hesaplar
+    ------------------------------------------------------------------------ */
     doc.addEventListener("mousemove", (e) => {
-        // Block menü açıksa hareket ettirme
-        const blockMenu = document.getElementById("blockMenu");
-        if (blockMenu && blockMenu.style.display === "block") return;
+        if (menuOpen) return;              // Menü açıkken between sabit kalsın
 
         clearTimeout(hoverTimer);
 
@@ -100,7 +142,7 @@ function initBetweenHover(iframe, article, between) {
         }
 
         const mouseY = e.clientY;
-        let match = null;
+        let match    = null;
 
         for (let i = 0; i < blocks.length - 1; i++) {
             const A = blocks[i].getBoundingClientRect();
@@ -117,29 +159,90 @@ function initBetweenHover(iframe, article, between) {
             return;
         }
 
+        // 800ms hover sonrası between göster
         hoverTimer = setTimeout(() => {
             const midY = (match.A.bottom + match.B.top) / 2;
+
+            // Bu block sonrası eklenecek
             between._refBlock = match.block;
+
             positionBetween(iframe, between, midY);
             showBetween(between);
-        }, 700);
+        }, 800);
     });
 
-    // Scroll olunca mellan çizgiyi gizle
+    /* ------------------------------------------------------------------------
+       2) SCROLL OLUNCA between GİZLENSİN
+       (Sonraki mousemove'de article çocukları zaten tekrar hesaplanıyor)
+    ------------------------------------------------------------------------ */
     doc.addEventListener("scroll", () => hideBetween(between));
     window.addEventListener("scroll", () => hideBetween(between));
+
+    /* ------------------------------------------------------------------------
+       3) + BUTONU → BLOCK MENÜ AÇ
+    ------------------------------------------------------------------------ */
+    plusBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+
+        const rect = between.getBoundingClientRect();
+        const x    = rect.left + rect.width / 2 - 110; // 220px menüyü ortala
+        const y    = rect.top + 32;
+
+        toggleBlockMenu(blockMenu, true, x, y);
+        menuOpen = true;
+    });
+
+    /* ------------------------------------------------------------------------
+       4) BLOCK MENÜDEN TIKLAYINCA BLOCK EKLE
+    ------------------------------------------------------------------------ */
+    blockMenu.querySelectorAll(".bm-item").forEach(item => {
+        item.addEventListener("click", () => {
+            const type    = item.dataset.type;
+            const ref     = between._refBlock;
+
+            insertBlock(doc, ref, type);
+
+            // Block eklendikten sonra between & menü reset
+            hideBetween(between);
+            toggleBlockMenu(blockMenu, false);
+        });
+    });
+
+    /* Menü dışına tıklayınca kapanma */
+    document.addEventListener("click", (e) => {
+        if (!blockMenu.contains(e.target)) {
+            toggleBlockMenu(blockMenu, false);
+        }
+        menuOpen = false;
+    });
+
+    /* ------------------------------------------------------------------------
+       5) BALLOON EDITOR (iframe içinde selection için)
+    ------------------------------------------------------------------------ */
+    initBalloonEditor(iframe);
 }
+
+/* ============================================================================
+   BETWEEN POSITIONING (admin tarafında)
+============================================================================ */
 
 function positionBetween(iframe, between, midY) {
     const iframeRect = iframe.getBoundingClientRect();
+    const win = iframe.contentWindow;
 
-    // Şu an için iframe içi scroll hesaba katılmadan:
-    const top  = iframeRect.top + midY;
-    const left = iframeRect.left + (iframeRect.width / 2) - 150; // 300px genişlik
+    // iframe içindeki article’ın scroll miktarı
+    const articleScrollTop = win.document.documentElement.scrollTop || win.document.body.scrollTop;
 
-    between.style.top  = top + "px";
+    // Y konumu → 2 scroll katmanı doğru şekilde birleşiyor
+    const top = iframeRect.top + (midY );
+
+    // X konumu → iframe ortasına göre
+    const left = iframeRect.left + iframeRect.width / 2 - 150;
+
+    between.style.top = top + "px";
     between.style.left = left + "px";
 }
+
 
 function showBetween(el) {
     el.style.display = "block";
@@ -147,41 +250,16 @@ function showBetween(el) {
 function hideBetween(el) {
     el.style.display = "none";
 }
+doc.addEventListener("scroll", () => {
+    hideBetween(between);
+});
 
+window.addEventListener("scroll", () => {
+    hideBetween(between);
+});
 /* ============================================================================
-   BLOCK MENU
+   BLOCK MENU AÇ / KAPAT
 ============================================================================ */
-
-function initBlockMenu(iframe, between, plusBtn, blockMenu) {
-    plusBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-
-        const rect = between.getBoundingClientRect();
-        const x = rect.left + rect.width / 2 - 110; // 220px menü
-        const y = rect.top + 30;
-
-        toggleBlockMenu(blockMenu, true, x, y);
-    });
-
-    blockMenu.querySelectorAll(".bm-item").forEach(item => {
-        item.addEventListener("click", () => {
-            const doc  = iframe.contentDocument;
-            const type = item.dataset.type;
-            const ref  = between._refBlock;
-
-            insertBlock(doc, ref, type);
-
-            hideBetween(between);
-            toggleBlockMenu(blockMenu, false);
-        });
-    });
-
-    document.addEventListener("click", (e) => {
-        if (!blockMenu.contains(e.target)) {
-            toggleBlockMenu(blockMenu, false);
-        }
-    });
-}
 
 function toggleBlockMenu(menu, show, x = 0, y = 0) {
     if (show) {
@@ -207,34 +285,42 @@ function insertBlock(doc, refBlock, type) {
             el = doc.createElement("p");
             el.textContent = "Yeni paragraf...";
             break;
+
         case "h1":
             el = doc.createElement("h1");
             el.textContent = "Yeni Başlık (H1)";
             break;
+
         case "h2":
             el = doc.createElement("h2");
             el.textContent = "Yeni Başlık (H2)";
             break;
+
         case "blockquote":
             el = doc.createElement("blockquote");
             el.textContent = "Alıntı metni...";
             break;
+
         case "img":
             el = doc.createElement("img");
             el.src = prompt("Resim URL:");
             el.style.maxWidth = "100%";
             break;
+
         case "ul":
             el = doc.createElement("ul");
             el.innerHTML = "<li>Liste öğesi</li>";
             break;
+
         case "ol":
             el = doc.createElement("ol");
             el.innerHTML = "<li>Liste öğesi</li>";
             break;
+
         case "hr":
             el = doc.createElement("hr");
             break;
+
         default:
             el = doc.createElement("p");
             el.textContent = "Yeni blok...";
@@ -242,43 +328,39 @@ function insertBlock(doc, refBlock, type) {
 
     el.setAttribute("contenteditable", "true");
     refBlock.insertAdjacentElement("afterend", el);
+
     placeCaret(doc, el);
 }
 
 function placeCaret(doc, el) {
     const range = doc.createRange();
     const sel   = doc.getSelection();
-
     range.setStart(el, 0);
     range.collapse(true);
-
     sel.removeAllRanges();
     sel.addRange(range);
 }
 
 /* ============================================================================
-   BALLOON EDITOR – selection + click
+   BALLOON EDITOR (iframe içinde selection için)
 ============================================================================ */
 
-function initBalloonEditor(iframe, article) {
-    const doc = iframe.contentDocument;
+function initBalloonEditor(iframe) {
+    const doc     = iframe.contentDocument;
+    const article = doc.querySelector("article");
+    if (!article) return;
 
-    // Balloon yarat
     const balloon = doc.createElement("div");
-    balloon.id = "ewcBalloon";
     balloon.style.cssText = `
         position: fixed;
-        padding: 6px 15px;
+        padding: 6px 8px;
         background: #111;
         color: #fff;
-        border-radius: 50px;
+        border-radius: 8px;
         display: none;
         z-index: 999999;
         font-size: 13px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-        opacity:0;
-        transform:scale(.95) translateY(-6px);
-        transition: opacity .15s ease, transform .15s ease;
     `;
 
     balloon.innerHTML = `
@@ -286,23 +368,15 @@ function initBalloonEditor(iframe, article) {
         <button data-cmd="italic"    style="background:none;border:none;color:#fff;margin:0 4px;cursor:pointer;font-style:italic;">I</button>
         <button data-cmd="underline" style="background:none;border:none;color:#fff;margin:0 4px;cursor:pointer;text-decoration:underline;">U</button>
         <span style="border-left:1px solid rgba(255,255,255,0.3);margin:0 4px;height:14px;display:inline-block;"></span>
-        <button data-block="p"       style="background:none;border:none;color:#fff;margin:0 4px;cursor:pointer;">P</button>
-        <button data-block="h1"      style="background:none;border:none;color:#fff;margin:0 4px;cursor:pointer;">H1</button>
-        <button data-block="h2"      style="background:none;border:none;color:#fff;margin:0 4px;cursor:pointer;">H2</button>
-        <button data-block="p"       style="background:none;border:none;color:#fff;margin:0 4px;cursor:pointer;">P</button>
-        <button data-block="h1"      style="background:none;border:none;color:#fff;margin:0 4px;cursor:pointer;">H1</button>
-        <button data-block="h2"      style="background:none;border:none;color:#fff;margin:0 4px;cursor:pointer;">H2</button>
-        <button data-block="p"       style="background:none;border:none;color:#fff;margin:0 4px;cursor:pointer;">P</button>
         <button data-block="h1"      style="background:none;border:none;color:#fff;margin:0 4px;cursor:pointer;">H1</button>
         <button data-block="h2"      style="background:none;border:none;color:#fff;margin:0 4px;cursor:pointer;">H2</button>
     `;
 
     doc.body.appendChild(balloon);
-    EWC_Balloon = balloon;
 
-    // Balloon toolbar click
+    // Toolbar butonları
     balloon.addEventListener("click", (e) => {
-        const btn   = e.target.closest("button");
+        const btn = e.target.closest("button");
         if (!btn) return;
 
         const cmd   = btn.dataset.cmd;
@@ -311,98 +385,54 @@ function initBalloonEditor(iframe, article) {
         if (cmd) {
             doc.execCommand(cmd, false, null);
         } else if (block) {
-            if (EWC_SelectedBlock) {
-                transformBlockTag(doc, EWC_SelectedBlock, block);
-            } else {
-                wrapSelectionInBlock(doc, block);
-            }
+            wrapSelectionInBlock(doc, block);
         }
     });
 
-    // Selection → balloon
-    function updateBalloonForSelection() {
+    function updateBalloon() {
         const sel = doc.getSelection();
 
         if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
-           // hideBalloon();
+            balloon.style.display = "none";
             return;
         }
 
         const range = sel.getRangeAt(0);
         const rect  = range.getBoundingClientRect();
-        const iframeRect = iframe.getBoundingClientRect();
 
-        const top  = iframeRect.top + rect.top - 40;
-        const left = iframeRect.left + rect.left + rect.width / 2 - 60;
+        // Seçim article içinde mi?
+        const common = range.commonAncestorContainer;
+        if (!article.contains(common)) {
+            balloon.style.display = "none";
+            return;
+        }
 
-        balloon.style.top  = `${top}px`;
-        balloon.style.left = `${left}px`;
-        showBalloon();
+        const top  = rect.top - 40;
+        const left = rect.left + (rect.width / 2) - 60;
+
+        balloon.style.top     = `${top}px`;
+        balloon.style.left    = `${left}px`;
+        balloon.style.display = "block";
     }
 
-    doc.addEventListener("mouseup", () => setTimeout(updateBalloonForSelection, 10));
-    doc.addEventListener("keyup",  () => setTimeout(updateBalloonForSelection, 10));
+    doc.addEventListener("mouseup", () => setTimeout(updateBalloon, 10));
+    doc.addEventListener("keyup",  () => setTimeout(updateBalloon, 10));
 
-    // Click → block seç, balloon göster
+    // İframe içinde tıklayıp seçimi kaldırınca gizle
     doc.addEventListener("click", (e) => {
-        if (balloon.contains(e.target)) return;
-
-        const block = getBlockElement(e.target, article);
-        if (block) {
-            EWC_SelectedBlock = block;
-            handleIframeClick(block); // log amaçlı
-
-            const rect       = block.getBoundingClientRect();
-            const iframeRect = iframe.getBoundingClientRect();
-
-            const top  = iframeRect.top + rect.top - 40;
-            const left = iframeRect.left + rect.left + rect.width / 2 - 60;
-
-            balloon.style.top  = `${top}px`;
-            balloon.style.left = `${left}px`;
-
-            showBalloon();
-        } else {
+        if (!balloon.contains(e.target)) {
             const sel = doc.getSelection();
             if (!sel || sel.isCollapsed) {
-                hideBalloon();
+                balloon.style.display = "none";
             }
         }
     });
 }
 
-function showBalloon() {
-    if (!EWC_Balloon) return;
-    EWC_Balloon.style.display = "block";
-    requestAnimationFrame(() => {
-        EWC_Balloon.style.opacity = "1";
-        EWC_Balloon.style.transform = "scale(1) translateY(0)";
-    });
-}
+/* ============================================================================
+   Seçimi H1 / H2 ile sarmak
+============================================================================ */
 
-function hideBalloon() {
-    if (!EWC_Balloon) return;
-    EWC_Balloon.style.opacity = "0";
-    EWC_Balloon.style.transform = "scale(.95) translateY(-6px)";
-    setTimeout(() => {
-        EWC_Balloon.style.display = "none";
-    }, 150);
-}
-
-/* Block tag dönüşümü (klik ile seçili block için) */
-function transformBlockTag(doc, el, newTag) {
-    const tag = newTag.toLowerCase();
-    if (!["p","h1","h2","blockquote"].includes(tag)) return;
-
-    const newEl = doc.createElement(tag);
-    newEl.innerHTML = el.innerHTML;
-    newEl.setAttribute("contenteditable", "true");
-
-    el.replaceWith(newEl);
-    EWC_SelectedBlock = newEl;
-}
-
-/* Selection → blok ile sarmak için (H1/H2 vs) */
 function wrapSelectionInBlock(doc, blockTag) {
     const sel = doc.getSelection();
     if (!sel || sel.rangeCount === 0) return;
@@ -420,12 +450,11 @@ function wrapSelectionInBlock(doc, blockTag) {
 }
 
 /* ============================================================================
-   GLOBAL execCommand
+   EXEC COMMAND
 ============================================================================ */
 
 function runCommand(cmd, value = null) {
     const iframe = document.querySelector("iframe");
-    if (!iframe) return;
     const doc = iframe.contentDocument;
     doc.execCommand(cmd, false, value);
 }
