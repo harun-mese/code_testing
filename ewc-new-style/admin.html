@@ -174,28 +174,92 @@
         background: #999;
         border-radius: 2px;
     }
+
+    #betweenContainer {
+    position: absolute;
+    width: 300px;
+    display: none;
+    pointer-events: none;
+    z-index: 999999;
+}
+
+#betweenContainer .line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 2px;
+    background: #1e88e5;
+    transform: translateY(-50%);
+}
+
+#betweenContainer .plus {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 26px;
+    height: 26px;
+    transform: translate(-50%, -50%);
+    background: #1e88e5;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    pointer-events: auto;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.block-menu {
+    position: absolute;
+    width: 220px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.18);
+    display: none;
+    z-index: 999999999;
+    padding: 6px 0;
+}
+
+.block-menu .bm-item {
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    color: #333;
+    transition: 0.15s;
+}
+
+.block-menu .bm-item i {
+    font-size: 18px;
+    color: #1e88e5;
+}
+
+.block-menu .bm-item:hover {
+    background: #f5f7ff;
+}
+
 </style>
 
 </head>
 <body>
 <header class="toolbar">
-  <button onclick="EWCEditor.exec('bold')"><i class="bi bi-type-bold"></i></button>
-<button onclick="EWCEditor.exec('italic')"><i class="bi bi-type-italic"></i></button>
-<button onclick="EWCEditor.exec('underline')"><i class="bi bi-type-underline"></i></button>
+ <button onclick="runCommand('bold')"><i class="bi bi-type-bold"></i></button>
+<button onclick="runCommand('italic')"><i class="bi bi-type-italic"></i></button>
+<button onclick="runCommand('underline')"><i class="bi bi-type-underline"></i></button>
 
-<button onclick="EWCEditor.setBlock('h1')">H1</button>
-<button onclick="EWCEditor.setBlock('h2')">H2</button>
-<button onclick="EWCEditor.setBlock('h3')">H3</button>
+<button onclick="runCommand('formatBlock','h1')">H1</button>
+<button onclick="runCommand('formatBlock','h2')">H2</button>
+<button onclick="runCommand('formatBlock','h3')">H3</button>
 
-    <div class="divider"></div>
+<button onclick="runCommand('insertUnorderedList')"><i class="bi bi-list-ul"></i></button>
+<button onclick="runCommand('insertOrderedList')"><i class="bi bi-list-ol"></i></button>
 
-    <button><i class="bi bi-list-ul"></i></button>
-    <button><i class="bi bi-list-ol"></i></button>
+<button onclick="runCommand('createLink', prompt('URL gir:'))"><i class="bi bi-link-45deg"></i></button>
+<button onclick="runCommand('insertImage', prompt('Resim URL:'))"><i class="bi bi-image"></i></button>
 
-    <div class="divider"></div>
-
-    <button><i class="bi bi-link-45deg"></i></button>
-    <button><i class="bi bi-image"></i></button>
 </header>
 
 <div class="window-wrapper" id="windowWrapper">
@@ -232,6 +296,28 @@
     <!-- Window'un DIŞINDAKİ bar -->
     <div class="resize-bar" id="resizeBar"></div>
 </div>
+
+
+<div id="betweenContainer">
+    <div class="line"></div>
+    <div class="plus">+</div>
+    <!-- Modern Block Menu -->
+
+
+</div>
+<div id="blockMenu" class="block-menu">
+    <div class="bm-item" data-type="p"><i class="bi bi-text-paragraph"></i> Paragraf</div>
+    <div class="bm-item" data-type="h1"><i class="bi bi-type-h1"></i> Başlık H1</div>
+    <div class="bm-item" data-type="h2"><i class="bi bi-type-h2"></i> Başlık H2</div>
+    <div class="bm-item" data-type="blockquote"><i class="bi bi-quote"></i> Alıntı</div>
+    <div class="bm-item" data-type="img"><i class="bi bi-image"></i> Resim</div>
+    <div class="bm-item" data-type="ul"><i class="bi bi-list-ul"></i> Liste UL</div>
+    <div class="bm-item" data-type="ol"><i class="bi bi-list-ol"></i> Liste OL</div>
+    <div class="bm-item" data-type="hr"><i class="bi bi-dash-lg"></i> Çizgi (HR)</div>
+</div>
+
+
+
 
 <script>
    const resizeBar   = document.getElementById("resizeBar");
