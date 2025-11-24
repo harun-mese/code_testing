@@ -264,7 +264,7 @@ function initBalloonEditor(iframe, article) {
     const doc = iframe.contentDocument;
 
     // Balloon yarat
-    const balloon = doc.createElement("div");
+    const balloon = document.createElement("div");
     balloon.id = "ewcBalloon";
     balloon.style.cssText = `
         position: fixed;
@@ -297,7 +297,8 @@ function initBalloonEditor(iframe, article) {
         <button data-block="h2"      style="background:none;border:none;color:#fff;margin:0 4px;cursor:pointer;">H2</button>
     `;
 
-    doc.body.appendChild(balloon);
+   // doc.body.appendChild(balloon);
+    document.body.appendChild(balloon);
     EWC_Balloon = balloon;
 
     // Balloon toolbar click
@@ -333,7 +334,7 @@ function initBalloonEditor(iframe, article) {
         const iframeRect = iframe.getBoundingClientRect();
 
         const top  = iframeRect.top + rect.top - 40;
-        const left = iframeRect.left + rect.left + rect.width / 2 - 60;
+        const left = iframeRect.left + rect.left;
 
         balloon.style.top  = `${top}px`;
         balloon.style.left = `${left}px`;
@@ -356,7 +357,7 @@ function initBalloonEditor(iframe, article) {
             const iframeRect = iframe.getBoundingClientRect();
 
             const top  = iframeRect.top + rect.top - 40;
-            const left = iframeRect.left + rect.left + rect.width / 2 - 60;
+            const left = iframeRect.left + rect.left;
 
             balloon.style.top  = `${top}px`;
             balloon.style.left = `${left}px`;

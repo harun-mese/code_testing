@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* GENEL FOOTER AYARLARI */
+.footer {
+    color: #ccc;
+    padding: 40px 20px;
+    margin-top: 40px;
+    font-family: Arial, sans-serif;
+}
+
+.footer a {
+    color: #aaa;
+    text-decoration: none;
+}
+
+.footer h4 {
+    margin-bottom: 12px;
+    color: #fff;
+}
+
+/* ========================================================= */
+/* FOOTER 1 – Minimal */
+/* ========================================================= */
+#footer-1 {
+    background: #111;
+    text-align: center;
+}
+
+#footer-1 .social a {
+    margin: 0 5px;
+}
+
+/* ========================================================= */
+/* FOOTER 2 – Grid Kurumsal */
+/* ========================================================= */
+#footer-2 {
+    background: #0d0d0d;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 40px;
+    padding: 60px 20px;
+}
+
+#footer-2 ul {
+    list-style: none;
+    padding: 0;
+}
+
+/* ========================================================= */
+/* FOOTER 3 – E-Ticaret */
+/* ========================================================= */
+#footer-3 {
+    background: #111;
+}
+
+#footer-3 .top {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+#footer-3 .box a {
+    display: block;
+    margin: 4px 0;
+}
+
+#footer-3 .bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+
+/* ========================================================= */
+/* FOOTER 4 – Modern Logo Ortada */
+/* ========================================================= */
+#footer-4 {
+    background: #000;
+    text-align: center;
+    padding: 50px 20px;
+}
+
+#footer-4 .logo {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+#footer-4 .menu {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+}
+
+#footer-4 .social a {
+    margin: 0 10px;
+}
+
+/* ========================================================= */
+/* FOOTER 5 – Blog + Newsletter */
+/* ========================================================= */
+#footer-5 {
+    background: #181818;
+    text-align: center;
+    padding: 60px 20px;
+}
+
+#footer-5 .newsletter input {
+    padding: 10px;
+    border: none;
+    width: 220px;
+    max-width: 80%;
+}
+
+#footer-5 .newsletter button {
+    padding: 10px 20px;
+    border: none;
+    background: #ff3b3b;
+    color: #fff;
+}
+/* ========================================================= */
+/* FOOTER 6 – Mega Menu */
+/* ========================================================= */
+#footer-6 {
+    background: #131313;
+    padding: 60px;
+}
+
+#footer-6 .mega-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 40px;
+}
+
+#footer-6 .mega-col a {
+    display: block;
+    margin: 6px 0;
+}
+
+/* ========================================================= */
+/* FOOTER 7 – SaaS / Startup */
+/* ========================================================= */
+#footer-7 {
+    background: #0c0c0c;
+    padding: 60px;
+}
+
+#footer-7 .saas-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 40px;
+}
+
+#footer-7 .about h3 {
+    margin-bottom: 12px;
+    color: #fff;
+}
+
+#footer-7 a {
+    display: block;
+    margin: 5px 0;
+}
+
+/* ========================================================= */
+/* FOOTER 8 – Blog / Sitemap */
+/* ========================================================= */
+#footer-8 {
+    background: #1a1a1a;
+    padding: 60px;
+}
+
+#footer-8 .sitemap-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+    gap: 40px;
+}
+
+#footer-8 .sitemap-col a {
+    display: block;
+    margin: 4px 0;
+}
+#footer-9 {
+    background: linear-gradient(135deg, #0e0e0e, #181818 60%, #1f0033);
+    padding: 60px 20px;
+    color: #ddd;
+    box-shadow: 0 -10px 20px rgba(0,0,0,0.4);
+}
+
+#footer-9 .container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+#footer-9 .brand h2 {
+    font-size: 32px;
+    color: #fff;
+}
+
+#footer-9 .brand p {
+    color: #aaa;
+}
+
+#footer-9 .links {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 30px;
+}
+
+#footer-9 .links h4 {
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+#footer-9 .links a {
+    display: block;
+    margin: 6px 0;
+    opacity: 0.8;
+    transition: .2s;
+}
+
+#footer-9 .links a:hover {
+    opacity: 1;
+    transform: translateX(4px);
+}
+
+#footer-9 .copy {
+    margin-top: 50px;
+    text-align: center;
+    opacity: .7;
+}
+#footer-10 {
+    background: #151515;
+    padding: 60px;
+    color: #ddd;
+}
+
+#footer-10 .soft-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px,1fr));
+    gap: 40px;
+}
+
+#footer-10 h4 {
+    color: #fff;
+}
+
+#footer-10 a {
+    display: block;
+    padding: 8px 10px;
+    margin: 6px 0;
+    background: #1a1a1a;
+    border-radius: 10px;
+    box-shadow: inset 3px 3px 7px #0d0d0d, inset -3px -3px 7px #222;
+    transition: .2s;
+}
+
+#footer-10 a:hover {
+    background: #202020;
+}
+#footer-11 {
+    background: #0b0b0b;
+    padding: 60px 30px;
+    color: #ccc;
+}
+
+#footer-11 .elegant-top {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+#footer-11 hr {
+    border-color: #333;
+    margin: 30px 0;
+}
+
+#footer-11 .elegant-bottom {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+    gap: 40px;
+}
+
+#footer-11 h4 {
+    color: #fff;
+}
+
+#footer-11 a {
+    display: block;
+    margin: 6px 0;
+}
+#footer-12 {
+    background: #121212;
+    padding: 60px;
+}
+
+#footer-12 .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 20px;
+}
+
+#footer-12 .card {
+    padding: 20px;
+    background: #1a1a1a;
+    border-radius: 10px;
+    transition: .2s;
+}
+
+#footer-12 .card:hover {
+    background: #262626;
+    transform: translateY(-3px);
+}
+#footer-13 {
+    background: linear-gradient(90deg, #111, #181818);
+    padding: 60px;
+    display: flex;
+    justify-content: space-between;
+    color: #ddd;
+    flex-wrap: wrap;
+}
+
+#footer-13 .right a {
+    display: block;
+    margin: 5px 0;
+}
+.footer-last {
+    background: #0d0d0d;
+    padding: 60px 20px 40px;
+    color: #ccc;
+    font-family: "Inter", sans-serif;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1.5fr 2fr;
+    gap: 60px;
+}
+
+.footer-brand h2 {
+    color: #fff;
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.footer-brand p {
+    color: #999;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.footer-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 30px;
+}
+
+.footer-links h4 {
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    display: block;
+    margin: 6px 0;
+    color: #aaa;
+    font-size: 14px;
+    text-decoration: none;
+    transition: 0.25s ease;
+    padding: 2px 0;
+}
+
+.footer-links a:hover {
+    color: #fff;
+    transform: translateX(4px);
+}
+
+.footer-copy {
+    margin-top: 40px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    padding-top: 20px;
+    border-top: 1px solid #222;
+}
+
+/* Responsive */
+@media(max-width: 800px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+}
+.footer-link {
+    color: #aaa;
+    text-decoration: none;
+    display: block;
+    margin: 6px 0;
+    transition: 0.2s ease;
+}
+
+.footer-link:hover {
+    color: #fff;
+    padding-left: 4px;
+}
+
+   
+    
+    section.demo-block {
+      padding: 60px 0 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    section.demo-block h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      color: #f8f9fa;
+    }
+
+    /* -------------------------------------------------- */
+    /* 🔷 1) MODERN KURUMSAL FOOTER                       */
+    /* -------------------------------------------------- */
+    .footer-corporate {
+      background: #06070a;
+      padding: 48px 0 28px;
+    }
+
+    .footer-corporate .footer-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: #f8f9fa;
+      margin-bottom: 12px;
+    }
+
+    .footer-link {
+      display: block;
+      font-size: 14px;
+      color: #a7b0c0;
+      text-decoration: none;
+      margin-bottom: 6px;
+      transition: color .18s ease, transform .18s ease;
+    }
+    .footer-link:hover {
+      color: #4da3ff;
+      transform: translateX(3px);
+    }
+
+    .footer-corporate .brand-name {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: .03em;
+      margin-bottom: 6px;
+    }
+
+    .footer-corporate .brand-tagline {
+      font-size: 14px;
+      color: #8a93a4;
+    }
+
+    .footer-corporate .copy {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin-top: 28px;
+      padding-top: 16px;
+      font-size: 13px;
+      color: #7c8597;
+    }
+
+    /* -------------------------------------------------- */
+    /* 🔶 2) STARTUP / SAAS FOOTER                        */
+    /* -------------------------------------------------- */
+    .footer-saas {
+      background: radial-gradient(circle at top left, #1b2a4a 0, #070814 42%, #050509 100%);
+      padding: 56px 0 28px;
+    }
+
+    .footer-saas .badge-pill {
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      background: rgba(84, 197, 255, 0.08);
+      color: #54c5ff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-saas .brand {
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .footer-saas p {
+      color: #9da7c4;
+      font-size: 14px;
+    }
+
+    .footer-saas .footer-link {
+      color: #a6b2d4;
+    }
+
+    .footer-saas .footer-link:hover {
+      color: #73e5ff;
+    }
+
+    .footer-saas .newsletter-input {
+      background: rgba(10,10,20,0.95);
+      border-radius: 999px;
+      padding: 4px;
+      border: 1px solid rgba(134, 160, 255, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .footer-saas .newsletter-input input {
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #e5e8ff;
+      font-size: 14px;
+      padding-left: 10px;
+    }
+
+    .footer-saas .newsletter-input input::placeholder {
+      color: #7079a0;
+    }
+
+    .footer-saas .newsletter-input button {
+      border-radius: 999px;
+      border: 0;
+      padding: 7px 14px;
+      font-size: 13px;
+      background: linear-gradient(135deg, #53e5ff, #9580ff);
+      color: #050510;
+      font-weight: 600;
+    }
+
+    .footer-saas .copy {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin-top: 32px;
+      padding-top: 14px;
+      font-size: 13px;
+      color: #8089ae;
+      text-align: center;
+    }
+
+    /* -------------------------------------------------- */
+    /* ⚫ 3) APPLE TARZI MINIMAL FOOTER                    */
+    /* -------------------------------------------------- */
+    .footer-apple {
+      background: #f5f5f7;
+      color: #1d1d1f;
+      padding: 28px 0 22px;
+      font-size: 13px;
+    }
+
+    .footer-apple .link-row {
+      border-top: 1px solid #d2d2d7;
+      border-bottom: 1px solid #d2d2d7;
+      padding: 12px 0;
+      margin-bottom: 10px;
+    }
+
+    .footer-apple a {
+      color: #424245;
+      text-decoration: none;
+      margin-right: 16px;
+      white-space: nowrap;
+    }
+
+    .footer-apple a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-apple .copy {
+      color: #6e6e73;
+    }
+
+    .footer-apple .divider {
+      margin: 0 8px;
+      color: #a1a1a6;
+    }
+
+    /* -------------------------------------------------- */
+    /* 🟣 4) GRADIENT NEON MODERN FOOTER                   */
+    /* -------------------------------------------------- */
+    .footer-neon {
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at top, #291c71 0, #05030f 55%, #020109 100%);
+      padding: 56px 0 28px;
+    }
+
+    .footer-neon::before {
+      content: "";
+      position: absolute;
+      inset: -120px;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(255, 0, 153, 0.18), transparent 55%),
+        radial-gradient(circle at 80% 0%, rgba(0, 219, 222, 0.2), transparent 52%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .footer-neon .neon-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-neon .brand {
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .footer-neon .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      color: #f5f5ff;
+      background: rgba(10, 10, 30, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(14px);
+    }
+
+    .footer-neon .footer-title {
+      font-size: 13px;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: #d1caff;
+      margin-bottom: 10px;
+    }
+
+    .footer-neon .footer-link {
+      color: #c0c5ff;
+      font-size: 14px;
+    }
+
+    .footer-neon .footer-link:hover {
+      color: #ffffff;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    }
+
+    .footer-neon .copy {
+      border-top: 1px solid rgba(255,255,255,0.15);
+      margin-top: 32px;
+      padding-top: 14px;
+      font-size: 13px;
+      color: #a9b2ff;
+    }
+
+    /* -------------------------------------------------- */
+    /* ⚪ 5) ÇOK TEMİZ UI (AIRBNB / STRIPE TARZI)          */
+    /* -------------------------------------------------- */
+    .footer-clean {
+      background: #ffffff;
+      color: #1f2933;
+      padding: 40px 0 28px;
+      font-size: 14px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .footer-clean .footer-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .footer-clean .footer-link {
+      color: #4b5563;
+      margin-bottom: 4px;
+    }
+
+    .footer-clean .footer-link:hover {
+      color: #111827;
+    }
+
+    .footer-clean .copy {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .footer-corporate .footer-title,
+      .footer-saas .footer-title {
+        margin-top: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+    <footer class="bg-dark text-light pt-5 pb-4">
+  <div class="container">
+
+    <div class="row g-4">
+
+      <!-- Brand -->
+      <div class="col-lg-4 col-md-6">
+        <h3 class="fw-bold text-white">Harun.dev</h3>
+        <p class="text-secondary mt-2">
+          Modern web & software development.
+        </p>
+      </div>
+
+      <!-- Site Links -->
+      <div class="col-lg-2 col-md-6">
+        <h5 class="text-white mb-3">Site</h5>
+        <ul class="list-unstyled">
+          <li><a href="#" class="footer-link">Anasayfa</a></li>
+          <li><a href="#" class="footer-link">Blog</a></li>
+          <li><a href="#" class="footer-link">Projeler</a></li>
+          <li><a href="#" class="footer-link">Hakkımda</a></li>
+        </ul>
+      </div>
+
+      <!-- Resources -->
+      <div class="col-lg-3 col-md-6">
+        <h5 class="text-white mb-3">Kaynaklar</h5>
+        <ul class="list-unstyled">
+          <li><a href="#" class="footer-link">Eğitimler</a></li>
+          <li><a href="#" class="footer-link">Dokümanlar</a></li>
+          <li><a href="#" class="footer-link">Kod Örnekleri</a></li>
+          <li><a href="#" class="footer-link">Rehberler</a></li>
+        </ul>
+      </div>
+
+      <!-- Social -->
+      <div class="col-lg-3 col-md-6">
+        <h5 class="text-white mb-3">Sosyal</h5>
+        <ul class="list-unstyled">
+          <li><a href="#" class="footer-link">Twitter</a></li>
+          <li><a href="#" class="footer-link">GitHub</a></li>
+          <li><a href="#" class="footer-link">Instagram</a></li>
+          <li><a href="#" class="footer-link">LinkedIn</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="text-center text-secondary mt-4 pt-3 border-top border-secondary">
+      © 2025 Harun.dev – Tüm Hakları Saklıdır.
+    </div>
+
+  </div>
+</footer>
+
+<footer class="footer-last">
+    <div class="footer-container">
+
+        <div class="footer-brand">
+            <h2>Harun.dev</h2>
+            <p>Modern web & software development.</p>
+        </div>
+
+        <div class="footer-links">
+            <div class="col">
+                <h4>Site</h4>
+                <a href="#">Anasayfa</a>
+                <a href="#">Blog</a>
+                <a href="#">Projeler</a>
+                <a href="#">Hakkımda</a>
+            </div>
+
+            <div class="col">
+                <h4>Kaynaklar</h4>
+                <a href="#">Eğitimler</a>
+                <a href="#">Dokümanlar</a>
+                <a href="#">Kod Örnekleri</a>
+                <a href="#">Rehberler</a>
+            </div>
+
+            <div class="col">
+                <h4>Sosyal</h4>
+                <a href="#">Twitter</a>
+                <a href="#">GitHub</a>
+                <a href="#">Instagram</a>
+                <a href="#">LinkedIn</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-copy">
+        © 2025 Harun.dev – Tüm Hakları Saklıdır.
+    </div>
+</footer>
+
+<!-- ========================================================= -->
+<!-- FOOTER 1 – Minimal -->
+<!-- ========================================================= -->
+<footer id="footer-1" class="footer footer-minimal">
+    <p>© 2025 Harun Meşe. All Rights Reserved.</p>
+    <div class="social">
+        <a href="#">Twitter</a> ·
+        <a href="#">GitHub</a> ·
+        <a href="#">LinkedIn</a>
+    </div>
+</footer>
+
+<!-- ========================================================= -->
+<!-- FOOTER 2 – 4 Kolon Kurumsal -->
+<!-- ========================================================= -->
+<footer id="footer-2" class="footer footer-grid">
+    <div class="col">
+        <h4>Hakkımızda</h4>
+        <p>Kısa bir açıklama buraya gelecek.</p>
+    </div>
+    <div class="col">
+        <h4>Menü</h4>
+        <ul>
+            <li><a href="#">Anasayfa</a></li>
+            <li><a href="#">Servisler</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">İletişim</a></li>
+        </ul>
+    </div>
+    <div class="col">
+        <h4>Kategoriler</h4>
+        <ul>
+            <li><a href="#">Teknoloji</a></li>
+            <li><a href="#">Yazılım</a></li>
+            <li><a href="#">Tasarım</a></li>
+        </ul>
+    </div>
+    <div class="col">
+        <h4>İletişim</h4>
+        <p>mail@site.com</p>
+        <p>+90 555 555 55 55</p>
+    </div>
+</footer>
+
+<!-- ========================================================= -->
+<!-- FOOTER 3 – E-Ticaret Tarzı -->
+<!-- ========================================================= -->
+<footer id="footer-3" class="footer footer-ecom">
+    <div class="top">
+        <div class="box">
+            <h4>Alışveriş</h4>
+            <a href="#">Yeni Ürünler</a>
+            <a href="#">Popüler</a>
+            <a href="#">Kampanyalar</a>
+        </div>
+        <div class="box">
+            <h4>Bilgiler</h4>
+            <a href="#">Hakkımızda</a>
+            <a href="#">Gizlilik Politikası</a>
+            <a href="#">Koşullar</a>
+        </div>
+        <div class="box">
+            <h4>Destek</h4>
+            <a href="#">İletişim</a>
+            <a href="#">SSS</a>
+            <a href="#">Canlı Destek</a>
+        </div>
+    </div>
+
+    <div class="bottom">
+        © 2025 Harun Shop – Tüm Hakları Saklıdır.
+    </div>
+</footer>
+
+<!-- ========================================================= -->
+<!-- FOOTER 4 – Modern / Logo Ortada -->
+<!-- ========================================================= -->
+<footer id="footer-4" class="footer footer-modern">
+    <div class="logo">HARUN</div>
+    <ul class="menu">
+        <li><a href="#">Anasayfa</a></li>
+        <li><a href="#">Hakkında</a></li>
+        <li><a href="#">Projeler</a></li>
+        <li><a href="#">İletişim</a></li>
+    </ul>
+    <div class="social">
+        <a href="#">Instagram</a>
+        <a href="#">Twitter</a>
+        <a href="#">GitHub</a>
+    </div>
+    <p class="copy">© 2025 Harun Meşe</p>
+</footer>
+
+<!-- ========================================================= -->
+<!-- FOOTER 5 – Blog + Newsletter -->
+<!-- ========================================================= -->
+<footer id="footer-5" class="footer footer-news">
+    <div class="about">
+        <h4>Harun Meşe Blog</h4>
+        <p>Yazılım, teknoloji ve geliştirme içerikleri.</p>
+    </div>
+
+    <form class="newsletter">
+        <input type="email" placeholder="Email adresiniz">
+        <button>Abone Ol</button>
+    </form>
+
+    <p class="copy">© 2025 Tüm Hakları Saklıdır.</p>
+</footer>
+
+<footer id="footer-6" class="footer footer-mega">
+    <div class="mega-row">
+        <div class="mega-col">
+            <h4>Alışveriş</h4>
+            <a href="#">Elektronik</a>
+            <a href="#">Telefon</a>
+            <a href="#">Bilgisayar</a>
+            <a href="#">Giyim</a>
+            <a href="#">Ayakkabı</a>
+            <a href="#">Ev & Yaşam</a>
+            <a href="#">Kitap</a>
+        </div>
+
+        <div class="mega-col">
+            <h4>Kategoriler</h4>
+            <a href="#">Yazılım</a>
+            <a href="#">Tasarım</a>
+            <a href="#">Teknoloji</a>
+            <a href="#">Ekonomi</a>
+            <a href="#">Eğitim</a>
+        </div>
+
+        <div class="mega-col">
+            <h4>Harun Store</h4>
+            <a href="#">Hakkımızda</a>
+            <a href="#">Kariyer</a>
+            <a href="#">Basın</a>
+            <a href="#">Yatırımcı İlişkileri</a>
+            <a href="#">Sürdürülebilirlik</a>
+        </div>
+
+        <div class="mega-col">
+            <h4>Yardım</h4>
+            <a href="#">Sipariş Takibi</a>
+            <a href="#">İade Süreci</a>
+            <a href="#">Üyelik İşlemleri</a>
+            <a href="#">Destek Merkezi</a>
+            <a href="#">Gizlilik Politikası</a>
+            <a href="#">Kullanım Koşulları</a>
+        </div>
+    </div>
+
+    <div class="copy">
+        © 2025 Harun Store – Tüm Hakları Saklıdır.
+    </div>
+</footer>
+<footer id="footer-7" class="footer footer-saas">
+    <div class="saas-row">
+
+        <div class="saas-col about">
+            <h3>HarunCloud</h3>
+            <p>Geliştiriciler için modern bulut çözümleri.</p>
+        </div>
+
+        <div class="saas-col">
+            <h4>Ürünler</h4>
+            <a href="#">Cloud Hosting</a>
+            <a href="#">API Platform</a>
+            <a href="#">Database</a>
+            <a href="#">Monitoring</a>
+            <a href="#">Analytics</a>
+            <a href="#">AI Tools</a>
+        </div>
+
+        <div class="saas-col">
+            <h4>Şirket</h4>
+            <a href="#">Hakkımızda</a>
+            <a href="#">Kariyer</a>
+            <a href="#">Blog</a>
+            <a href="#">Müşteriler</a>
+            <a href="#">Güvenlik</a>
+        </div>
+
+        <div class="saas-col">
+            <h4>Topluluk</h4>
+            <a href="#">Discord</a>
+            <a href="#">GitHub</a>
+            <a href="#">Forum</a>
+            <a href="#">Eğitim Dokümanları</a>
+            <a href="#">API Referansı</a>
+        </div>
+
+        <div class="saas-col">
+            <h4>Destek</h4>
+            <a href="#">Canlı Destek</a>
+            <a href="#">Destek Merkezi</a>
+            <a href="#">Sözleşmeler</a>
+            <a href="#">Gizlilik</a>
+            <a href="#">Kullanım Koşulları</a>
+        </div>
+
+    </div>
+
+    <div class="copy">© 2025 HarunCloud – All Rights Reserved.</div>
+</footer>
+<footer id="footer-8" class="footer footer-sitemap">
+
+    <div class="sitemap-row">
+
+        <div class="sitemap-col">
+            <h4>Blog</h4>
+            <a href="#">Yazılım</a>
+            <a href="#">Tasarım</a>
+            <a href="#">Yapay Zeka</a>
+            <a href="#">Üretkenlik</a>
+            <a href="#">Kişisel Gelişim</a>
+            <a href="#">Eğitim</a>
+        </div>
+
+        <div class="sitemap-col">
+            <h4>Popüler Yazılar</h4>
+            <a href="#">React Nedir?</a>
+            <a href="#">Tailwind vs Bootstrap</a>
+            <a href="#">PHP 8 Yenilikleri</a>
+            <a href="#">AI ile Kod Yazmak</a>
+            <a href="#">Freelance Başlangıç</a>
+        </div>
+
+        <div class="sitemap-col">
+            <h4>Hızlı Erişim</h4>
+            <a href="#">Anasayfa</a>
+            <a href="#">Hakkımda</a>
+            <a href="#">Projeler</a>
+            <a href="#">Arşiv</a>
+            <a href="#">Etiketler</a>
+        </div>
+
+        <div class="sitemap-col">
+            <h4>Yasal</h4>
+            <a href="#">Gizlilik Politikası</a>
+            <a href="#">Çerez Politikası</a>
+            <a href="#">Kullanım Şartları</a>
+            <a href="#">KVKK</a>
+        </div>
+
+    </div>
+
+    <div class="copy">© 2025 Harun Meşe Blog – Tüm Hakları Saklıdır.</div>
+</footer>
+<footer id="footer-9" class="footer footer-gradient">
+    <div class="container">
+        <div class="brand">
+            <h2>Harun.dev</h2>
+            <p>Modern Web & Software Solutions</p>
+        </div>
+
+        <div class="links">
+            <div>
+                <h4>Ürünler</h4>
+                <a href="#">EWC Editor</a>
+                <a href="#">HarunCloud</a>
+                <a href="#">ImageTools</a>
+                <a href="#">Mobile Studio</a>
+            </div>
+            <div>
+                <h4>Kaynaklar</h4>
+                <a href="#">Blog</a>
+                <a href="#">Dokümanlar</a>
+                <a href="#">Eğitimler</a>
+                <a href="#">API Referansı</a>
+            </div>
+            <div>
+                <h4>Topluluk</h4>
+                <a href="#">Discord</a>
+                <a href="#">YouTube</a>
+                <a href="#">Twitter</a>
+                <a href="#">GitHub</a>
+            </div>
+        </div>
+
+        <div class="copy">© 2025 Harun.dev — Premium UI</div>
+    </div>
+</footer>
+<footer id="footer-10" class="footer footer-soft">
+    <div class="soft-container">
+        <div class="soft-col">
+            <h4>Harun SoftUI</h4>
+            <p>Yumuşak gölgeli modern tasarım.</p>
+        </div>
+
+        <div class="soft-col">
+            <h4>Linkler</h4>
+            <a href="#">Hakkında</a>
+            <a href="#">Projeler</a>
+            <a href="#">Blog</a>
+        </div>
+
+        <div class="soft-col">
+            <h4>Destek</h4>
+            <a href="#">SSS</a>
+            <a href="#">Canlı Destek</a>
+            <a href="#">Şartlar</a>
+        </div>
+    </div>
+
+    <div class="copy">© 2025 SoftUI</div>
+</footer>
+<footer id="footer-11" class="footer footer-elegant">
+    <div class="elegant-top">
+        <div>
+            <h3>Harun Studio</h3>
+            <p>Creative Digital Agency</p>
+        </div>
+
+        <div class="elegant-links">
+            <a href="#">Facebook</a>
+            <a href="#">Twitter</a>
+            <a href="#">Instagram</a>
+            <a href="#">GitHub</a>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="elegant-bottom">
+        <div class="col">
+            <h4>Servisler</h4>
+            <a href="#">Web Tasarım</a>
+            <a href="#">Mobil Uygulama</a>
+            <a href="#">SEO</a>
+            <a href="#">Danışmanlık</a>
+        </div>
+
+        <div class="col">
+            <h4>Kaynaklar</h4>
+            <a href="#">Blog</a>
+            <a href="#">Eğitimler</a>
+            <a href="#">Dökümanlar</a>
+        </div>
+
+        <div class="col">
+            <h4>Şirket</h4>
+            <a href="#">Hakkımızda</a>
+            <a href="#">Kariyer</a>
+            <a href="#">Gizlilik</a>
+        </div>
+    </div>
+
+    <p class="copy">© 2025 Harun Studio</p>
+</footer>
+<footer id="footer-12" class="footer card-footer">
+    <div class="card-grid">
+        <div class="card">
+            <h4>Hakkında</h4>
+            <p>Ben Harun. Yazılım geliştiriciyim.</p>
+        </div>
+        <div class="card">
+            <h4>Projeler</h4>
+            <a href="#">EWC CMS</a>
+            <a href="#">Mobil App</a>
+            <a href="#">HarunCloud</a>
+        </div>
+        <div class="card">
+            <h4>İletişim</h4>
+            <a href="#">Instagram</a>
+            <a href="#">GitHub</a>
+            <a href="#">Mail Gönder</a>
+        </div>
+    </div>
+</footer>
+<footer id="footer-13" class="footer split-footer">
+    <div class="left">
+        <h2>Harun.me</h2>
+        <p>Geleceği kodlayan geliştirici.</p>
+    </div>
+
+    <div class="right">
+        <h4>Bağlantılar</h4>
+        <a href="#">Anasayfa</a>
+        <a href="#">Blog</a>
+        <a href="#">Projeler</a>
+        <a href="#">İletişim</a>
+    </div>
+</footer>
+
+<div class="container py-4">
+  <h1 class="h4 text-light mb-4">Footer Koleksiyonu (5 Stil)</h1>
+</div>
+
+<!-- ===================================================== -->
+<!-- 🔷 1) MODERN KURUMSAL FOOTER                         -->
+<!-- ===================================================== -->
+<section class="demo-block">
+  <div class="container mb-3">
+    <h2>🔷 Modern Kurumsal</h2>
+  </div>
+
+  <footer class="footer-corporate">
+    <div class="container">
+      <div class="row gy-4">
+        <div class="col-md-4">
+          <div class="brand-name">HarunCorp</div>
+          <div class="brand-tagline">Kurumsal web & yazılım çözümleri.</div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="footer-title">Şirket</div>
+          <a href="#" class="footer-link">Hakkımızda</a>
+          <a href="#" class="footer-link">Kariyer</a>
+          <a href="#" class="footer-link">Referanslar</a>
+          <a href="#" class="footer-link">İletişim</a>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="footer-title">Hizmetler</div>
+          <a href="#" class="footer-link">Kurumsal Web</a>
+          <a href="#" class="footer-link">E-Ticaret</a>
+          <a href="#" class="footer-link">Mobil Uygulama</a>
+          <a href="#" class="footer-link">Danışmanlık</a>
+        </div>
+        <div class="col-md-3">
+          <div class="footer-title">İletişim</div>
+          <a href="#" class="footer-link">info@haruncorp.com</a>
+          <a href="#" class="footer-link">+90 555 555 55 55</a>
+          <a href="#" class="footer-link">İstanbul / Türkiye</a>
+        </div>
+      </div>
+
+      <div class="copy text-center text-md-start">
+        © 2025 HarunCorp. Tüm hakları saklıdır.
+      </div>
+    </div>
+  </footer>
+</section>
+
+<!-- ===================================================== -->
+<!-- 🔶 2) STARTUP / SAAS FOOTER                          -->
+<!-- ===================================================== -->
+<section class="demo-block">
+  <div class="container mb-3">
+    <h2>🔶 Startup / SaaS</h2>
+  </div>
+
+  <footer class="footer-saas">
+    <div class="container footer-saas-inner">
+      <div class="row gy-4 align-items-center">
+        <div class="col-lg-4">
+          <span class="badge-pill mb-2">
+            • SaaS Platform
+          </span>
+          <div class="brand">HarunCloud</div>
+          <p class="mt-2 mb-0">
+            Geliştiriciler için hızlı, ölçeklenebilir bulut altyapısı.
+          </p>
+        </div>
+        <div class="col-6 col-lg-2">
+          <div class="footer-title text-uppercase text-secondary small">Ürünler</div>
+          <a href="#" class="footer-link">Cloud Hosting</a>
+          <a href="#" class="footer-link">DB as a Service</a>
+          <a href="#" class="footer-link">Monitoring</a>
+          <a href="#" class="footer-link">Edge Functions</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <div class="footer-title text-uppercase text-secondary small">Kaynaklar</div>
+          <a href="#" class="footer-link">Dokümanlar</a>
+          <a href="#" class="footer-link">API Referansı</a>
+          <a href="#" class="footer-link">Örnek Uygulamalar</a>
+          <a href="#" class="footer-link">Durum Sayfası</a>
+        </div>
+        <div class="col-lg-4">
+          <div class="footer-title text-uppercase text-secondary small mb-1">Bültene Katıl</div>
+          <p class="mb-2">Yeni özelliklerden ve rehberlerden haberdar ol.</p>
+          <div class="newsletter-input">
+            <input type="email" placeholder="E-posta adresin">
+            <button type="button">Abone ol</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="copy">
+        © 2025 HarunCloud – Tüm hakları saklıdır.
+      </div>
+    </div>
+  </footer>
+</section>
+
+<!-- ===================================================== -->
+<!-- ⚫ 3) APPLE TARZI MINIMAL FOOTER                     -->
+<!-- ===================================================== -->
+<section class="demo-block">
+  <div class="container mb-3">
+    <h2>⚫ Apple Tarzı Minimal</h2>
+  </div>
+
+  <footer class="footer-apple">
+    <div class="container">
+      <div class="small text-muted mb-2">
+        Buradaki içerik yalnızca örnektir. Gerçek ürün şartlarını yansıtmaz.
+      </div>
+
+      <div class="link-row d-flex flex-wrap align-items-center">
+        <a href="#">Mağaza</a>
+        <a href="#">Blog</a>
+        <a href="#">Gizlilik</a>
+        <a href="#">Kullanım Şartları</a>
+        <a href="#">İletişim</a>
+      </div>
+
+      <div class="d-flex flex-wrap justify-content-between align-items-center">
+        <div class="copy mb-1">
+          © 2025 Harun.dev
+        </div>
+        <div class="copy">
+          Türkiye
+        </div>
+      </div>
+    </div>
+  </footer>
+</section>
+
+<!-- ===================================================== -->
+<!-- 🟣 4) GRADIENT NEON MODERN FOOTER                    -->
+<!-- ===================================================== -->
+<section class="demo-block">
+  <div class="container mb-3">
+    <h2>🟣 Gradient Neon Modern</h2>
+  </div>
+
+  <footer class="footer-neon">
+    <div class="neon-inner">
+      <div class="container">
+        <div class="row gy-4">
+          <div class="col-md-4">
+            <div class="chip mb-2">
+              Live • v1.3
+            </div>
+            <div class="brand mt-1">NeonBoard</div>
+            <p class="mt-2 text-secondary">
+              Gerçek zamanlı dashboard ve analitik platformu.
+            </p>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="footer-title">Platform</div>
+            <a href="#" class="footer-link">Overview</a>
+            <a href="#" class="footer-link">Dashboards</a>
+            <a href="#" class="footer-link">Integrations</a>
+            <a href="#" class="footer-link">Pricing</a>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="footer-title">Developers</div>
+            <a href="#" class="footer-link">API Docs</a>
+            <a href="#" class="footer-link">SDK’ler</a>
+            <a href="#" class="footer-link">Changelog</a>
+            <a href="#" class="footer-link">GitHub</a>
+          </div>
+          <div class="col-md-2">
+            <div class="footer-title">Social</div>
+            <a href="#" class="footer-link">Discord</a>
+            <a href="#" class="footer-link">Twitter</a>
+            <a href="#" class="footer-link">YouTube</a>
+          </div>
+        </div>
+
+        <div class="copy text-center text-md-start">
+          © 2025 NeonBoard — Built by Harun.
+        </div>
+      </div>
+    </div>
+  </footer>
+</section>
+
+<!-- ===================================================== -->
+<!-- ⚪ 5) ÇOK TEMİZ UI (AIRBNB / STRIPE TARZI)           -->
+<!-- ===================================================== -->
+<section class="demo-block">
+  <div class="container mb-3">
+    <h2>⚪ Çok Temiz UI (Airbnb / Stripe)</h2>
+  </div>
+
+  <footer class="footer-clean">
+    <div class="container">
+      <div class="row gy-3 align-items-center mb-3">
+        <div class="col-md-3">
+          <strong>Harun.dev</strong>
+        </div>
+        <div class="col-md-9">
+          <div class="row gy-2">
+            <div class="col-6 col-md-3">
+              <div class="footer-title">Ürün</div>
+              <a href="#" class="footer-link">Özellikler</a>
+              <a href="#" class="footer-link">Fiyatlandırma</a>
+              <a href="#" class="footer-link">Canlı Demo</a>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="footer-title">Şirket</div>
+              <a href="#" class="footer-link">Hakkımızda</a>
+              <a href="#" class="footer-link">Blog</a>
+              <a href="#" class="footer-link">Kariyer</a>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="footer-title">Destek</div>
+              <a href="#" class="footer-link">Yardım Merkezi</a>
+              <a href="#" class="footer-link">İletişim</a>
+              <a href="#" class="footer-link">Durum</a>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="footer-title">Yasal</div>
+              <a href="#" class="footer-link">Gizlilik</a>
+              <a href="#" class="footer-link">Şartlar</a>
+              <a href="#" class="footer-link">Çerezler</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex flex-wrap justify-content-between align-items-center copy">
+        <span class="mb-1">© 2025 Harun.dev</span>
+        <span class="mb-1">TR • English • Türkçe</span>
+      </div>
+    </div>
+  </footer>
+</section>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</body>
+</html>
